@@ -31,7 +31,7 @@ public class ReturnsApplication extends Application<ReturnsConfiguration> {
     }
 
     private void registerDemoResource(Environment environment) {
-        String template = "Hello, %s!";
+        String template = "Yoh, %s!";
         environment.jersey().register(new DemoResource(template));
         environment.healthChecks().register("template", new TemplateHealthCheck(template));
     }

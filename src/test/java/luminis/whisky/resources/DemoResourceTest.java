@@ -23,6 +23,6 @@ public class DemoResourceTest {
 
     @Test
     public void should_return_result() {
-        get("?name=IntegrationTest").then().assertThat().content(equalTo("{\"hello\":\"Hello, IntegrationTest!\"}"));
+        get("?name=IntegrationTest").then().assertThat().content(equalTo("{\"hello\":\"Yoh, IntegrationTest!\"}"));
     }
 }
