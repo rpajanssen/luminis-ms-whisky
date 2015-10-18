@@ -1,11 +1,16 @@
 package luminis.whisky;
 
 import luminis.whisky.health.TemplateHealthCheck;
-import luminis.whisky.resources.DemoResource;
+import luminis.whisky.resources.*;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import luminis.whisky.resources.Returns;
+import luminis.whisky.core.consul.ConsulDeployer;
+import luminis.whisky.resources.stubs.BillingStubResource;
+import luminis.whisky.resources.stubs.ShippingStubResource;
+import luminis.whisky.util.BoxFuseEnvironment;
+
+import javax.annotation.PreDestroy;
 
 public class ReturnsApplication extends Application<ReturnsConfiguration> {
 
@@ -20,14 +25,22 @@ public class ReturnsApplication extends Application<ReturnsConfiguration> {
 
     @Override
     public void initialize(final Bootstrap<ReturnsConfiguration> bootstrap) {
-        // TODO: application initialization
+        ConsulDeployer.deployAndRun();
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        // todo
     }
 
     @Override
     public void run(final ReturnsConfiguration configuration,
                     final Environment environment) {
         registerDemoResource(environment);
+        registerConsulResource(environment);
         registerReturns(environment);
+
+        optionallyRegisterStubs(environment);
     }
 
     private void registerDemoResource(Environment environment) {
@@ -36,8 +49,18 @@ public class ReturnsApplication extends Application<ReturnsConfiguration> {
         environment.healthChecks().register("template", new TemplateHealthCheck(template));
     }
 
-    private void registerReturns(Environment environment) {
-        environment.jersey().register(new Returns());
+    private void registerConsulResource(Environment environment) {
+        environment.jersey().register(new ConsulFacadeResource());
     }
 
+    private void optionallyRegisterStubs(Environment environment) {
+        if(BoxFuseEnvironment.isDevOrTest()) {
+            environment.jersey().register(new ShippingStubResource());
+            environment.jersey().register(new BillingStubResource());
+        }
+    }
+
+    private void registerReturns(Environment environment) {
+        environment.jersey().register(new ReturnsResource());
+    }
 }
