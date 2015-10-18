@@ -19,6 +19,8 @@ public class ConsulClient {
     private static final String CONSUL_API_JOIN = "/v1/agent/join/%s";
     private static final String CONSUL_API_FORCE_LEAVE = "/v1/agent/force-leave/%s";
 
+    private static final String CONSUL_API_HEALTH_SERVICE =  "/v1/health/service/%s";
+
     public String services() {
         WebTarget target = getWebTarget();
 
@@ -65,6 +67,12 @@ public class ConsulClient {
         WebTarget target = getWebTarget();
 
         return get(target, String.format(CONSUL_API_CATALOG_SERVICE, service));
+    }
+
+    public String healthService(final String service) {
+        WebTarget target = getWebTarget();
+
+        return get(target, String.format(CONSUL_API_HEALTH_SERVICE, service));
     }
 
     private String get(WebTarget target, String path) {

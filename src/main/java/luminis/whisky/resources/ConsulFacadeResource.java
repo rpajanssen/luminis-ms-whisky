@@ -7,6 +7,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+// todo : what if consul client has an error?
 /**
  * A facade around a running Consul instance.
  */
@@ -91,5 +92,11 @@ public class ConsulFacadeResource {
     @Path("/catalog/service/{service}")
     public Response catalogService(@PathParam("service") final String service) {
         return Response.status(200).entity(consulClient.catalogService(service)).build();
+    }
+
+    @GET
+    @Path("/health/service/{service}")
+    public Response healthService(@PathParam("service") final String service) {
+        return Response.status(200).entity(consulClient.healthService(service)).build();
     }
 }

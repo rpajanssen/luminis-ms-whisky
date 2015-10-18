@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+// todo : dev/test/prod
+//        cleanup
 public class ConsulDeployer {
     //private static String consul_address = "http://10.1.17.188:8301";
 
@@ -131,6 +133,7 @@ public class ConsulDeployer {
 
     }
 
+    // todo : dev/test + prod
     // todo : specify config dir with configuration
     // todo : specify ports so we can run multiple vm's without clashing ports on one machine
     private static void runConsul(boolean deployed) {
