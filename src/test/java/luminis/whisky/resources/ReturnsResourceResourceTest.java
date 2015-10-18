@@ -24,12 +24,25 @@ public class ReturnsResourceResourceTest {
         //RestAssured.port = 80;
     }
 
-    @Ignore
     @Test
     public void should_return_result() {
         given()
                 .contentType("application/json")
-                .body("{\"orderNumber\":\"55\"}").
-        post(ApplicationConstants.RETURNS_SERVICE_PATH).then().assertThat().content(equalTo("{\"orderNumber\":\"55\"}"));
+                .body("{\"orderNumber\":\"55\"}")
+
+        .post(ApplicationConstants.RETURNS_SERVICE_PATH)
+
+        .then().assertThat().content(equalTo("{\"orderNumber\":\"55\"}"));
+    }
+
+    @Test
+    public void should_return_error() {
+        given()
+                .contentType("application/json")
+                .body("{\"orderNumber\":\"666\"}")
+
+        .post(ApplicationConstants.RETURNS_SERVICE_PATH)
+
+        .then().assertThat().content(equalTo("{\"code\":404,\"description\":\"No shipments for order 666 found.\"}"));
     }
 }
