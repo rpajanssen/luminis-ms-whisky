@@ -1,22 +1,17 @@
 package luminis.whisky.resources;
 
+import luminis.whisky.client.RestClient;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.core.consul.DyingServiceException;
 import luminis.whisky.domain.OrderReturn;
-import luminis.whisky.util.ApplicationConstants;
 import luminis.whisky.util.Metrics;
-import org.glassfish.jersey.client.ClientConfig;
+import luminis.whisky.util.Services;
 
 import javax.ws.rs.*;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
 
+// todo : swagger
 // todo : hystrix
 @Path("/returns")
 public class ReturnsResource {
@@ -40,16 +35,16 @@ public class ReturnsResource {
     public Response returnOrder(final OrderReturn orderReturn) throws DyingServiceException {
         System.out.println("Incoming return order call: " + orderReturn.getOrderNumber());
 
-        metrics.increment(ApplicationConstants.RETURNS_SERVICE_ID);
+        metrics.increment(Services.RETURNS.getServiceID());
 
-        Response response = notifyShipping(orderReturn);
+        Response response = notify(Services.SHIPPING, orderReturn);
         if(response.getStatus()!= 200) {
             return Response.status(response.getStatus()).entity(response.getEntity()).build();
         }
 
         // todo : what if state is not 'returned'?
 
-        response = notifyBilling(orderReturn);
+        response = notify(Services.BILLING, orderReturn);
         if(response.getStatus() != 200) {
             return Response.status(response.getStatus()).entity(response.getEntity()).build();
         }
@@ -59,29 +54,12 @@ public class ReturnsResource {
         return Response.status(200).entity(orderReturn).build();
     }
 
-    private Response notifyShipping(final OrderReturn orderReturn) throws DyingServiceException {
-        String shippingUrl = consulServiceUrlFinder.findServiceUrl(ApplicationConstants.SHIPPING_SERVICE_ID);
-        System.out.println("Found shipping url: " + shippingUrl);
-        return post(shippingUrl, ApplicationConstants.SHIPPING_SERVICE_PATH, orderReturn);
-    }
+    private Response notify(Services service, final OrderReturn orderReturn) throws DyingServiceException {
+        String url = consulServiceUrlFinder.findServiceUrl(service.getServiceID());
 
-    private Response notifyBilling(final OrderReturn orderReturn) throws DyingServiceException {
-        String billingUrl = consulServiceUrlFinder.findServiceUrl(ApplicationConstants.BILLING_SERVICE_ID);
-        System.out.println("Found billingUrl url: " + billingUrl);
-        return post(billingUrl, ApplicationConstants.BILLING_SERVICE_PATH, orderReturn);
-    }
+        RestClient<OrderReturn> restClient =
+                new RestClient<>(url, service.getServicePath(), orderReturn);
 
-    private Response post(String baseUri, String path, final OrderReturn orderReturn) {
-        return getWebTarget(baseUri).path(path).request().accept(MediaType.APPLICATION_JSON).post(Entity.json(orderReturn), Response.class);
-    }
-
-    private WebTarget getWebTarget(String baseUri) {
-        ClientConfig config = new ClientConfig();
-        Client client = ClientBuilder.newClient(config);
-        return client.target(getBaseURI(baseUri));
-    }
-
-    public URI getBaseURI(String baseUri) {
-        return UriBuilder.fromUri(baseUri).build();
+        return restClient.post();
     }
 }

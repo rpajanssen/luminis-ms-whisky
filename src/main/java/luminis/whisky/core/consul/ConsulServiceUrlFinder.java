@@ -5,7 +5,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.util.StringUtils;
 
-// todo error handling
 public class ConsulServiceUrlFinder {
     // for now assume http and always a port
     private String baseUrl = "http://%s:%s/";
@@ -48,7 +47,11 @@ public class ConsulServiceUrlFinder {
                     String serviceAddress = (String) ((JSONObject) response.get(index)).get("ServiceAddress");
                     String servicePort = String.valueOf(((JSONObject) response.get(index)).get("ServicePort"));
 
-                    return String.format(baseUrl, ifNotNullAElseB(serviceAddress, address), servicePort);
+                    String url = String.format(baseUrl, ifNotNullAElseB(serviceAddress, address), servicePort);
+
+                    System.out.println(String.format("Found url %s for service %s", url, serviceId));
+
+                    return url;
                 }
             }
 
@@ -71,9 +74,18 @@ public class ConsulServiceUrlFinder {
                         String serviceAddress = (String) ((JSONObject) response.get(0)).get("ServiceAddress");
                         String servicePort = String.valueOf(((JSONObject) response.get(0)).get("ServicePort"));
 
-                        return new ServiceConfiguration()
+                        ServiceConfiguration serviceConfiguration =
+                                new ServiceConfiguration()
                                 .withAddress(ifNotNullAElseB(serviceAddress, address))
                                 .withPort(Integer.valueOf(ifNotNullAElseB(servicePort, "80")));
+
+                        System.out.println(
+                                String.format("Found service configuration %s for service %s",
+                                        serviceConfiguration.toString(),
+                                        serviceId)
+                        );
+
+                        return serviceConfiguration;
                     }
                 }
 

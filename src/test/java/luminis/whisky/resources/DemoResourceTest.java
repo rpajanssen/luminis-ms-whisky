@@ -25,4 +25,9 @@ public class DemoResourceTest {
     public void should_return_result() {
         get("?name=IntegrationTest").then().assertThat().content(equalTo("{\"hello\":\"Yoh, IntegrationTest!\"}"));
     }
+
+    @Test
+    public void should_return_pretty_error_message() {
+        get("?name=xess").then().assertThat().content(equalTo("{\"code\":500,\"description\":\"Unbelievable name has been rejected!\"}"));
+    }
 }

@@ -34,4 +34,13 @@ public class ServiceConfiguration {
     public int getPort() {
         return port;
     }
+
+    @Override
+    public String toString() {
+        return "ServiceConfiguration{" +
+                "protocol='" + protocol + '\'' +
+                ", address='" + address + '\'' +
+                ", port=" + port +
+                '}';
+    }
 }

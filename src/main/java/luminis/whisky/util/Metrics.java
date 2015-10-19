@@ -32,7 +32,7 @@ public class Metrics {
     @PostConstruct
     public void setup() {
         try {
-            ServiceConfiguration serviceConfiguration = consulServiceUrlFinder.findServiceConfiguration(ApplicationConstants.METRICS_SERVICE_ID);
+            ServiceConfiguration serviceConfiguration = consulServiceUrlFinder.findServiceConfiguration(Services.METRICS.getServiceID());
             System.out.println("Found statsd ip and port: " + serviceConfiguration.getAddress() +":"+ serviceConfiguration.getPort());
             statsdClient = new StatsdClient(serviceConfiguration.getAddress(), serviceConfiguration.getPort());
         } catch(Exception e) {
