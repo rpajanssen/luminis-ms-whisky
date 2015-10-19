@@ -10,6 +10,15 @@ import javax.ws.rs.ext.Provider;
 public class ExceptionHandler implements ExceptionMapper<Exception>{
     @Override
     public Response toResponse(Exception e) {
-        return Response.status(500).entity(new ErrorMessage(500, String.format("Unexpected exception occurred: %s", e.getMessage()))).build();
+        System.err.println(String.format("unexpected exception occurred : %s ", e.getMessage()));
+
+        return Response
+                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(new ErrorMessage(
+                                Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                                String.format("Unexpected exception occurred: %s", e.getMessage()
+                                )
+                        )
+                ).build();
     }
 }

@@ -10,6 +10,10 @@ import javax.ws.rs.ext.Provider;
 public class IllegalStateExceptionHandler implements ExceptionMapper<IllegalStateException>{
     @Override
     public Response toResponse(IllegalStateException e) {
-        return Response.status(500).entity(new ErrorMessage(500, e.getMessage())).build();
+        System.err.println(String.format("unexpected exception occurred : %s ", e.getMessage()));
+
+        return Response
+                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage())).build();
     }
 }

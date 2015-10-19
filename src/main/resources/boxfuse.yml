@@ -1,0 +1,15 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 80
+  requestLog:
+      appenders: []
+logging:
+  appenders:
+    - type: console
+      threshold: WARN
+
+defaultHystrixConfig:
+    hystrix.command.DeviceServiceDependency.execution.isolation.thread.timeoutInMilliseconds: 2000
+    hystrix.threadpool.PinCheckService.maxQueueSize: 50
+    hystrix.threadpool.PinCheckService.coreSize: 5

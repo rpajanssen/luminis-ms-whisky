@@ -1,5 +1,7 @@
 package luminis.whisky;
 
+import com.netflix.config.ConfigurationManager;
+import com.netflix.hystrix.strategy.HystrixPlugins;
 import luminis.whisky.health.TemplateHealthCheck;
 import luminis.whisky.resources.*;
 import io.dropwizard.Application;
@@ -13,10 +15,11 @@ import luminis.whisky.resources.handlers.RuntimeExceptionHandler;
 import luminis.whisky.resources.stubs.BillingStubResource;
 import luminis.whisky.resources.stubs.ShippingStubResource;
 import luminis.whisky.util.BoxFuseEnvironment;
+import org.apache.commons.configuration.MapConfiguration;
 
 import javax.annotation.PreDestroy;
 
-public class ReturnsApplication extends Application<ReturnsConfiguration> {
+public class ReturnsApplication extends Application<ApplicationConfiguration> {
 
     public static void main(final String[] args) throws Exception {
         new ReturnsApplication().run(args);
@@ -28,7 +31,7 @@ public class ReturnsApplication extends Application<ReturnsConfiguration> {
     }
 
     @Override
-    public void initialize(final Bootstrap<ReturnsConfiguration> bootstrap) {
+    public void initialize(final Bootstrap<ApplicationConfiguration> bootstrap) {
         ConsulDeployer.deployAndRun();
     }
 
@@ -38,8 +41,10 @@ public class ReturnsApplication extends Application<ReturnsConfiguration> {
     }
 
     @Override
-    public void run(final ReturnsConfiguration configuration,
+    public void run(final ApplicationConfiguration configuration,
                     final Environment environment) {
+        ConfigurationManager.install(new MapConfiguration(configuration.getDefaultHystrixConfig()));
+
         registerDemoResource(environment);
         registerConsulResource(environment);
         registerReturns(environment);

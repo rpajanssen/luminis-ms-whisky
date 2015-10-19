@@ -11,6 +11,8 @@ import javax.ws.rs.ext.Provider;
 public class DyingServiceExceptionHandler implements ExceptionMapper<DyingServiceException>{
     @Override
     public Response toResponse(DyingServiceException e) {
-        return Response.status(503).entity(new ErrorMessage(503, e.getMessage())).build();
+        System.err.println(String.format("unexpected exception occurred : %s ", e.getMessage()));
+
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(new ErrorMessage(Response.Status.SERVICE_UNAVAILABLE.getStatusCode(), e.getMessage())).build();
     }
 }

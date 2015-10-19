@@ -25,7 +25,7 @@ public class ConsulFacadeResource {
 
     @GET
     public Response ping() {
-        return Response.status(200).entity("pong").build();
+        return Response.status(Response.Status.OK).entity("pong").build();
     }
 
     @POST
@@ -33,7 +33,7 @@ public class ConsulFacadeResource {
     public Response ip(@PathParam("address") final String address) {
         ConsulConfiguration.getInstance().setIp(address);
 
-        return Response.status(200).entity("Host set to " + address).build();
+        return Response.status(Response.Status.OK).entity("Host set to " + address).build();
     }
 
     @POST
@@ -41,61 +41,61 @@ public class ConsulFacadeResource {
     public Response port(@PathParam("port") final String port) {
         ConsulConfiguration.getInstance().setPort(port);
 
-        return Response.status(200).entity("Port set to " + port).build();
+        return Response.status(Response.Status.OK).entity("Port set to " + port).build();
     }
 
 
     @GET
     @Path("/services")
     public Response services() {
-        return Response.status(200).entity(consulClient.services()).build();
+        return Response.status(Response.Status.OK).entity(consulClient.services()).build();
     }
 
     @GET
     @Path("/checks")
     public Response checks() {
-        return Response.status(200).entity(consulClient.checks()).build();
+        return Response.status(Response.Status.OK).entity(consulClient.checks()).build();
     }
 
     @GET
     @Path("/members")
     public Response members() {
-        return Response.status(200).entity(consulClient.members()).build();
+        return Response.status(Response.Status.OK).entity(consulClient.members()).build();
     }
 
     @GET
     @Path("/self")
     public Response self() {
-        return Response.status(200).entity(consulClient.self()).build();
+        return Response.status(Response.Status.OK).entity(consulClient.self()).build();
     }
 
     @GET
     @Path("/join/{address}")
     public Response join(@PathParam("address") final String address) {
-        return Response.status(200).entity(consulClient.join(address)).build();
+        return Response.status(Response.Status.OK).entity(consulClient.join(address)).build();
     }
 
     @GET
     @Path("/force-leave/{node}")
     public Response forceLeave(@PathParam("node") final String node) {
-        return Response.status(200).entity(consulClient.forceLeave(node)).build();
+        return Response.status(Response.Status.OK).entity(consulClient.forceLeave(node)).build();
     }
 
     @GET
     @Path("/catalog/services")
     public Response catalogServices() {
-        return Response.status(200).entity(consulClient.catalogServices()).build();
+        return Response.status(Response.Status.OK).entity(consulClient.catalogServices()).build();
     }
 
     @GET
     @Path("/catalog/service/{service}")
     public Response catalogService(@PathParam("service") final String service) {
-        return Response.status(200).entity(consulClient.catalogService(service)).build();
+        return Response.status(Response.Status.OK).entity(consulClient.catalogService(service)).build();
     }
 
     @GET
     @Path("/health/service/{service}")
     public Response healthService(@PathParam("service") final String service) {
-        return Response.status(200).entity(consulClient.healthService(service)).build();
+        return Response.status(Response.Status.OK).entity(consulClient.healthService(service)).build();
     }
 }
