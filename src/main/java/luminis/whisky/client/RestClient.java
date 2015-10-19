@@ -1,6 +1,7 @@
 package luminis.whisky.client;
 
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -28,6 +29,9 @@ public class RestClient<T> {
 
     private WebTarget getWebTarget(String baseUri) {
         ClientConfig config = new ClientConfig();
+        config.property(ClientProperties.CONNECT_TIMEOUT, 2000);
+        config.property(ClientProperties.READ_TIMEOUT, 5000);
+
         Client client = ClientBuilder.newClient(config);
         return client.target(getBaseURI(baseUri));
     }
