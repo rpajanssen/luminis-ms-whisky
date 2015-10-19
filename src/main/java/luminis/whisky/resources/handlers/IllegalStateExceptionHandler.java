@@ -1,4 +1,4 @@
-package luminis.whisky.resources;
+package luminis.whisky.resources.handlers;
 
 import luminis.whisky.domain.ErrorMessage;
 

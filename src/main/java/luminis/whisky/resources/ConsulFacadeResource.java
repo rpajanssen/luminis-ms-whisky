@@ -7,7 +7,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-// todo : what if consul client has an error?
 /**
  * A facade around a running Consul instance.
  */

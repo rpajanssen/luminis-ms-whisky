@@ -1,4 +1,4 @@
-package luminis.whisky.resources;
+package luminis.whisky.resources.handlers;
 
 import luminis.whisky.domain.ErrorMessage;
 
@@ -7,9 +7,9 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class RuntimeExceptionHandler implements ExceptionMapper<RuntimeException>{
+public class ExceptionHandler implements ExceptionMapper<Exception>{
     @Override
-    public Response toResponse(RuntimeException e) {
+    public Response toResponse(Exception e) {
         return Response.status(500).entity(new ErrorMessage(500, String.format("Unexpected exception occurred: %s", e.getMessage()))).build();
     }
 }
