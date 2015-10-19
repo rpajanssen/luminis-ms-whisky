@@ -21,6 +21,10 @@ public class DemoResource {
 
     @GET
     public Map<String, Object> sayHello(@QueryParam("name") Optional<String> name) {
+        if("xess".equalsIgnoreCase(name.or("stranger"))) {
+            throw new RuntimeException("Unbelievable name has been rejected!");
+        }
+
         Map<String, Object> result = new HashMap<>();
         result.put("hello", String.format(template, name.or("stranger")));
         return result;

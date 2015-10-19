@@ -5,7 +5,7 @@ import luminis.whisky.resources.*;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import luminis.whisky.core.consul.ConsulDeployer;
+import luminis.whisky.cli.ConsulDeployer;
 import luminis.whisky.resources.stubs.BillingStubResource;
 import luminis.whisky.resources.stubs.ShippingStubResource;
 import luminis.whisky.util.BoxFuseEnvironment;
@@ -41,6 +41,8 @@ public class ReturnsApplication extends Application<ReturnsConfiguration> {
         registerReturns(environment);
 
         optionallyRegisterStubs(environment);
+
+        registerExceptionHandlers(environment);
     }
 
     private void registerDemoResource(Environment environment) {
@@ -63,4 +65,10 @@ public class ReturnsApplication extends Application<ReturnsConfiguration> {
     private void registerReturns(Environment environment) {
         environment.jersey().register(new ReturnsResource());
     }
+
+    private void registerExceptionHandlers(Environment environment) {
+        environment.jersey().register(new RuntimeExceptionHandler());
+        environment.jersey().register(new ExceptionHandler());
+    }
+
 }
