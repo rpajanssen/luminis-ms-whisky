@@ -14,7 +14,7 @@ public class ShippingStubResource {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     public Response ping() {
-        return Response.status(200).entity("pong").build();
+        return Response.status(Response.Status.OK).entity("pong").build();
     }
 
     @POST
@@ -23,9 +23,14 @@ public class ShippingStubResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response returnOrder(final OrderReturn orderReturn) {
         if("666".equalsIgnoreCase(orderReturn.getOrderNumber())) {
-            return Response.status(404).entity(new ErrorMessage(404, String.format("No shipments for order %s found.", orderReturn.getOrderNumber()))).build();
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorMessage(
+                            Response.Status.NOT_FOUND.getStatusCode(),
+                            String.format("No shipments for order %s found.", orderReturn.getOrderNumber()))
+                    ).build();
         }
 
-        return Response.status(200).entity(orderReturn).build();
+        return Response.status(Response.Status.OK).entity(orderReturn).build();
     }
 }

@@ -6,14 +6,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-// todo : on occasion return a 500 response
 @Path("/bills")
 public class BillingStubResource {
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     public Response ping() {
-        return Response.status(200).entity("pong").build();
+        return Response.status(Response.Status.OK).entity("pong").build();
     }
 
     @POST
@@ -21,6 +20,14 @@ public class BillingStubResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response returnOrder(final OrderReturn orderReturn) {
-        return Response.status(200).entity(orderReturn).build();
+        if("007".equals(orderReturn.getOrderNumber())) {
+            try {
+                Thread.sleep(30000);
+            } catch (InterruptedException e) {
+                // silently fail
+            }
+        }
+
+        return Response.status(Response.Status.OK).entity(orderReturn).build();
     }
 }

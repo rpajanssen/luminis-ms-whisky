@@ -60,11 +60,6 @@ public class ReturnsResource {
     private Response notify(Services service, final OrderReturn orderReturn) throws DyingServiceException, InterruptedException {
         String url = consulServiceUrlFinder.findServiceUrl(service.getServiceID());
 
-//        RestClient<OrderReturn> restClient =
-//                new RestClient<>(url, service.getServicePath(), orderReturn);
-//
-//        return restClient.post();
-
         try {
             RestPostCommand<OrderReturn> restPostCommand = new RestPostCommand<>(service, url, service.getServicePath(), orderReturn);
 
