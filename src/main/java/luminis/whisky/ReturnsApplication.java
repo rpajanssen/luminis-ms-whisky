@@ -67,8 +67,9 @@ public class ReturnsApplication extends Application<ReturnsConfiguration> {
     }
 
     private void registerExceptionHandlers(Environment environment) {
+        environment.jersey().register(new DyingServiceExceptionHandler());
+        environment.jersey().register(new IllegalStateExceptionHandler());
         environment.jersey().register(new RuntimeExceptionHandler());
         environment.jersey().register(new ExceptionHandler());
     }
-
 }
