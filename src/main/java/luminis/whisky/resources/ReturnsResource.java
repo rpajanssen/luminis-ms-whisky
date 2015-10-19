@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 // todo : swagger
 // todo : hystrix
+// todo : execute calls to billing / shipping concurrently
 @Path("/returns")
 public class ReturnsResource {
     private ConsulServiceUrlFinder consulServiceUrlFinder;
