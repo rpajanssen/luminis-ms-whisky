@@ -1,0 +1,25 @@
+{
+    "ports" : {
+        "dns" : 8600,
+        "http" : 8500,
+        "rpc" : 8400,
+        "serf_lan" : 8301,
+        "serf_wan" : 8302,
+        "server" : 8300
+    },
+
+    "services": [
+        {
+            "id" : "returns",
+            "name" : "returns",
+            "address": "127.0.0.1",
+            "port" : 80,
+            "check" : {
+                "id" : "returns",
+                "name" : "returns",
+                "http" : "http://127.0.0.1:80/returns",
+                "interval" : "10s"
+            }
+        }
+    ]
+}

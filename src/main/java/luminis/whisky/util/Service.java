@@ -1,6 +1,6 @@
 package luminis.whisky.util;
 
-public enum Services {
+public enum Service {
     METRICS("metrics",null),
     RETURNS("returns", "/returns"),
     SHIPPING("shipping", "/shipments/returns"),
@@ -9,7 +9,7 @@ public enum Services {
     private final String serviceID;
     private final String servicePath;
 
-    Services(String serviceID, String servicePath) {
+    Service(String serviceID, String servicePath) {
         this.serviceID = serviceID;
         this.servicePath = servicePath;
     }

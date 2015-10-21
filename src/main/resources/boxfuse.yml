@@ -8,8 +8,13 @@ logging:
   appenders:
     - type: console
       threshold: WARN
-
 defaultHystrixConfig:
-    hystrix.command.DeviceServiceDependency.execution.isolation.thread.timeoutInMilliseconds: 4000
-    hystrix.threadpool.PinCheckService.maxQueueSize: 50
-    hystrix.threadpool.PinCheckService.coreSize: 5
+  hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 4000
+  hystrix.command.default.circuitBreaker.enabled: true
+  hystrix.command.default.circuitBreaker.requestVolumeThreshold: 20
+  hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds: 5000
+  hystrix.command.default.circuitBreaker.errorThresholdPercentage: 50
+  hystrix.threadpool.post-shipping.maxQueueSize: 50
+  hystrix.threadpool.post-shipping.coreSize: 5
+  hystrix.threadpool.post-billing.maxQueueSize: 50
+  hystrix.threadpool.post-billing.coreSize: 5

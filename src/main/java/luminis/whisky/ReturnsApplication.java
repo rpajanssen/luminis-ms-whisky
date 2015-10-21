@@ -1,17 +1,13 @@
 package luminis.whisky;
 
 import com.netflix.config.ConfigurationManager;
-import com.netflix.hystrix.strategy.HystrixPlugins;
 import luminis.whisky.health.TemplateHealthCheck;
 import luminis.whisky.resources.*;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import luminis.whisky.cli.ConsulDeployer;
-import luminis.whisky.resources.handlers.DyingServiceExceptionHandler;
-import luminis.whisky.resources.handlers.ExceptionHandler;
-import luminis.whisky.resources.handlers.IllegalStateExceptionHandler;
-import luminis.whisky.resources.handlers.RuntimeExceptionHandler;
+import luminis.whisky.resources.handlers.*;
 import luminis.whisky.resources.stubs.BillingStubResource;
 import luminis.whisky.resources.stubs.ShippingStubResource;
 import luminis.whisky.util.BoxFuseEnvironment;
@@ -54,6 +50,7 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
         registerExceptionHandlers(environment);
     }
 
+    // todo : delete this demo health check?
     private void registerDemoResource(Environment environment) {
         String template = "Yoh, %s!";
         environment.jersey().register(new DemoResource(template));
@@ -77,6 +74,7 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
 
     private void registerExceptionHandlers(Environment environment) {
         environment.jersey().register(new DyingServiceExceptionHandler());
+        environment.jersey().register(new InterruptedExceptionHandler());
         environment.jersey().register(new IllegalStateExceptionHandler());
         environment.jersey().register(new RuntimeExceptionHandler());
         environment.jersey().register(new ExceptionHandler());

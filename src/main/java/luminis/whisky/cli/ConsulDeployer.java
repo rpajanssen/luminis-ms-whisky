@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-// todo : dev/test/prod
-//        cleanup
 public class ConsulDeployer {
     //private static String consul_address = "http://10.1.17.188:8301";
 
@@ -27,7 +25,12 @@ public class ConsulDeployer {
             boolean result = deployArtifact("consul/binary/consul", "consul/binary", "consul/binary/consul", Permission.EXECUTE);
 
             // deploy consul configuration
-            result = result && deployArtifact("consul/config/basic_config.json", "consul/config", "consul/config/basic_config.json", Permission.READ);
+            if(BoxFuseEnvironment.isProd()) {
+                result = result && deployArtifact("consul/config/prod_config.json", "consul/config", "consul/config/config.json", Permission.READ);
+            } else {
+                // todo : local with local external server
+                result = result && deployArtifact("consul/config/test_config.json", "consul/config", "consul/config/config.json", Permission.READ);
+            }
 
             // deploy consul ui
             deployArtifact("consul/dist/index.html", "consul/dist", "consul/dist/index.html", Permission.READ);
@@ -58,9 +61,9 @@ public class ConsulDeployer {
     private static boolean createFolder(String targetFolder, String targetFilePath) {
         File folder = new File("./" + targetFolder);
         if(!folder.exists()) {
-            System.out.println("creating " + targetFilePath);
+            System.out.println("creating folder " + targetFilePath);
             if(!folder.mkdirs()) {
-                System.out.println("unable to create " + targetFilePath);
+                System.out.println("unable to create folder " + targetFilePath);
                 return true;
             }
         }
@@ -99,8 +102,6 @@ public class ConsulDeployer {
         }
     }
 
-    // todo : dev/test + prod
-    // todo : specify config dir with configuration
     // todo : specify ports so we can run multiple vm's without clashing ports on one machine
     private static void runConsul(boolean deployed) {
         if (deployed) {
@@ -144,6 +145,7 @@ public class ConsulDeployer {
             System.out.print("Exec result = " + exitVal);
 
         } catch (IOException | InterruptedException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
             System.out.println();
         }

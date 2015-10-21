@@ -7,7 +7,7 @@ import luminis.whisky.core.consul.DyingServiceException;
 import luminis.whisky.domain.ErrorMessage;
 import luminis.whisky.domain.OrderReturn;
 import luminis.whisky.util.Metrics;
-import luminis.whisky.util.Services;
+import luminis.whisky.util.Service;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -38,16 +38,16 @@ public class ReturnsResource {
     public Response returnOrder(final OrderReturn orderReturn) throws DyingServiceException, InterruptedException {
         System.out.println("Incoming return order call: " + orderReturn.getOrderNumber());
 
-        metrics.increment(Services.RETURNS.getServiceID());
+        metrics.increment(Service.RETURNS.getServiceID());
 
-        Response response = notify(Services.SHIPPING, orderReturn);
+        Response response = notify(Service.SHIPPING, orderReturn);
         if(Response.Status.OK.getStatusCode()!=response.getStatus()) {
             return Response.status(response.getStatus()).entity(response.getEntity()).build();
         }
 
         // todo : what if state is not 'returned'?
 
-        response = notify(Services.BILLING, orderReturn);
+        response = notify(Service.BILLING, orderReturn);
         if(Response.Status.OK.getStatusCode()!=response.getStatus()) {
             return Response.status(response.getStatus()).entity(response.getEntity()).build();
         }
@@ -57,7 +57,7 @@ public class ReturnsResource {
         return Response.status(Response.Status.OK).entity(orderReturn).build();
     }
 
-    private Response notify(Services service, final OrderReturn orderReturn) throws DyingServiceException, InterruptedException {
+    private Response notify(Service service, final OrderReturn orderReturn) throws DyingServiceException, InterruptedException {
         String url = consulServiceUrlFinder.findServiceUrl(service.getServiceID());
 
         try {

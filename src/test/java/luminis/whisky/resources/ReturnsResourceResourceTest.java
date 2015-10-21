@@ -2,7 +2,7 @@ package luminis.whisky.resources;
 
 
 import com.jayway.restassured.RestAssured;
-import luminis.whisky.util.Services;
+import luminis.whisky.util.Service;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class ReturnsResourceResourceTest {
                 .contentType("application/json")
                 .body("{\"orderNumber\":\"55\"}")
 
-        .post(Services.RETURNS.getServicePath())
+        .post(Service.RETURNS.getServicePath())
 
         .then().assertThat().content(equalTo("{\"orderNumber\":\"55\"}"));
     }
@@ -41,7 +41,7 @@ public class ReturnsResourceResourceTest {
                 .contentType("application/json")
                 .body("{\"orderNumber\":\"666\"}")
 
-        .post(Services.RETURNS.getServicePath())
+        .post(Service.RETURNS.getServicePath())
 
         .then().assertThat().content(equalTo("{\"code\":404,\"description\":\"No shipments for order 666 found.\"}"));
     }
