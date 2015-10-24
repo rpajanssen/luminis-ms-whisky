@@ -1,6 +1,5 @@
 package luminis.whisky.resources.stubs;
 
-import com.wordnik.swagger.annotations.ApiOperation;
 import luminis.whisky.domain.ErrorMessageResponse;
 import luminis.whisky.domain.OrderReturnRequest;
 import luminis.whisky.domain.Ping;
@@ -32,6 +31,14 @@ public class ShippingStubResource {
                                     Response.Status.NOT_FOUND.getStatusCode(),
                                     String.format("No shipments for order %s found.", orderReturn.getOrderNumber()))
                     ).build();
+        }
+
+        if("006".equals(orderReturn.getOrderNumber())) {
+            try {
+                Thread.sleep(30000);
+            } catch (InterruptedException e) {
+                // silently fail
+            }
         }
 
         return Response.status(Response.Status.OK).entity(orderReturn).build();
