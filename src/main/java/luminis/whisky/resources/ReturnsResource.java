@@ -63,6 +63,7 @@ public class ReturnsResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(
                             new ErrorMessageResponse(
+                                    // todo : different status code (align with guys from luminis)
                                     Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
                                     String.format("unable to cancel shipping")
                             )
@@ -79,8 +80,9 @@ public class ReturnsResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(
                             new ErrorMessageResponse(
+                                    // todo : different status code (align with guys from luminis)
                                     Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
-                                    String.format("unable to cancel billing")
+                                    String.format("unable to cancel billing but cancellation of shipping has succeeded")
                             )
                     ).build();
         }
