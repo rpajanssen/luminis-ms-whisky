@@ -2,6 +2,6 @@ language: java
 jdk: oraclejdk8
 env:
   global:
-    - MAVEN_OPTS="-Xmx2048m"
+    - MAVEN_OPTS="-Xmx2560m"
 install: mvn versions:set
-script: mvn deploy
+script: mvn deploy -X
