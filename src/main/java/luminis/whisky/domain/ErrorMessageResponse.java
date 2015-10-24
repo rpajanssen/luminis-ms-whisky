@@ -7,16 +7,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement
-public class ErrorMessage {
+public class ErrorMessageResponse {
     @XmlElement
     private int code;
 
     @XmlElement
     private String description;
 
-    public ErrorMessage() {}
+    public ErrorMessageResponse() {}
 
-    public ErrorMessage(int code, String description) {
+    public ErrorMessageResponse(int code, String description) {
         this.code = code;
         this.description = description;
     }
