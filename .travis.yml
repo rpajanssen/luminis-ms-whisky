@@ -4,4 +4,4 @@ env:
   global:
     - MAVEN_OPTS="-Xmx2048m"
 install: mvn versions:set
-script: MAVEN_OPTS="-Xmx2048m" mvn deploy -X
+script: MAVEN_OPTS="-Xmx2048m" mvn deploy
