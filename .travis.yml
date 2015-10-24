@@ -4,4 +4,4 @@ env:
   global:
     - MAVEN_OPTS="-Xmx2560m"
 install: mvn versions:set
-script: mvn deploy -X
+script: mvn deploy
