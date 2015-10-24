@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 // todo : execute calls to billing / shipping concurrently
+// todo : fan out
 @Path("/returns")
 @Api(value="Order returns", description = "Returns the order and cancels shipping and billing.")
 public class ReturnsResource {
