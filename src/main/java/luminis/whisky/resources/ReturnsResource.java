@@ -6,8 +6,8 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import luminis.whisky.command.RestPostCommand;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.core.consul.DyingServiceException;
-import luminis.whisky.domain.ErrorMessage;
-import luminis.whisky.domain.OrderReturn;
+import luminis.whisky.domain.ErrorMessageResponse;
+import luminis.whisky.domain.OrderReturnRequest;
 import luminis.whisky.util.Metrics;
 import luminis.whisky.util.Service;
 
@@ -29,6 +29,7 @@ public class ReturnsResource {
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     @ApiOperation(
             value = "Ping",
             notes = "Simply returns pong."
@@ -44,7 +45,7 @@ public class ReturnsResource {
             value = "Return order",
             notes = "Cancels an order. Cancels the shipment and billing of the order."
     )
-    public Response returnOrder(final OrderReturn orderReturn) throws DyingServiceException, InterruptedException {
+    public Response returnOrder(final OrderReturnRequest orderReturn) throws DyingServiceException, InterruptedException {
         System.out.println("Incoming return order call: " + orderReturn.getOrderNumber());
 
         metrics.increment(Service.RETURNS.getServiceID());
@@ -67,11 +68,11 @@ public class ReturnsResource {
     }
 
     // todo : cleanup
-    private Response notify(Service service, final OrderReturn orderReturn) throws DyingServiceException, InterruptedException {
+    private Response notify(Service service, final OrderReturnRequest orderReturn) throws DyingServiceException, InterruptedException {
         String url = consulServiceUrlFinder.findServiceUrl(service.getServiceID());
 
         try {
-            RestPostCommand<OrderReturn> restPostCommand = new RestPostCommand<>(service, url, service.getServicePath(), orderReturn);
+            RestPostCommand<OrderReturnRequest> restPostCommand = new RestPostCommand<>(service, url, service.getServicePath(), orderReturn);
 
             return restPostCommand.execute();
         } catch (HystrixRuntimeException e) {
@@ -83,7 +84,7 @@ public class ReturnsResource {
 
             return Response
                     .status(Response.Status.SERVICE_UNAVAILABLE)
-                    .entity(new ErrorMessage(
+                    .entity(new ErrorMessageResponse(
                                     Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
                                     String.format("service %s unavailbale", service.getServiceID()))
                     ).build();

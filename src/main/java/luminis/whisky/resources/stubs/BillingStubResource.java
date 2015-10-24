@@ -1,6 +1,6 @@
 package luminis.whisky.resources.stubs;
 
-import luminis.whisky.domain.OrderReturn;
+import luminis.whisky.domain.OrderReturnRequest;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -19,7 +19,7 @@ public class BillingStubResource {
     @Path("/returns")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response returnOrder(final OrderReturn orderReturn) {
+    public Response returnOrder(final OrderReturnRequest orderReturn) {
         if("007".equals(orderReturn.getOrderNumber())) {
             try {
                 Thread.sleep(30000);

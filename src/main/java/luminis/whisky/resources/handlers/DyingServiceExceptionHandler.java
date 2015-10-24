@@ -1,7 +1,7 @@
 package luminis.whisky.resources.handlers;
 
 import luminis.whisky.core.consul.DyingServiceException;
-import luminis.whisky.domain.ErrorMessage;
+import luminis.whisky.domain.ErrorMessageResponse;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -13,6 +13,6 @@ public class DyingServiceExceptionHandler implements ExceptionMapper<DyingServic
     public Response toResponse(DyingServiceException e) {
         System.err.println(String.format("unexpected exception occurred : %s ", e.getMessage()));
 
-        return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(new ErrorMessage(Response.Status.SERVICE_UNAVAILABLE.getStatusCode(), e.getMessage())).build();
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(new ErrorMessageResponse(Response.Status.SERVICE_UNAVAILABLE.getStatusCode(), e.getMessage())).build();
     }
 }
