@@ -22,8 +22,6 @@ public class ConsulFacadeResource {
 
     public ConsulFacadeResource() {
         consulClient = new ConsulClient();
-
-        System.out.println("instantiated consul resource");
     }
 
     @GET
