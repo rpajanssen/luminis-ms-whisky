@@ -11,4 +11,4 @@ install: mvn versions:set
 script:
   - sudo rm /etc/mavenrc
   - export MAVEN_OPTS="-Xmx2048m"
-  - mvn install
+  - mvn deploy
