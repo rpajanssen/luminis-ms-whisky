@@ -63,41 +63,6 @@
             <groupId>io.federecio</groupId>
             <artifactId>dropwizard-swagger</artifactId>
             <version>0.6</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-library</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-reflect</artifactId>
-                </exclusion>
-                    <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-library</artifactId>
-                </exclusion>
-
-                <exclusion>
-                    <groupId>io.federecio</groupId>
-                    <artifactId>dropwizard-junit</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.seleniumhq.selenium</groupId>
-                    <artifactId>selenium-java</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.seleniumhq.selenium.client-drivers</groupId>
-                    <artifactId>selenium-java-client-driver</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
 

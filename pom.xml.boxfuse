@@ -44,19 +44,19 @@
         </dependency>
 
         <dependency>
-        	<groupId>com.netflix.hystrix</groupId>
-        	<artifactId>hystrix-core</artifactId>
-        	<version>1.4.18</version>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-core</artifactId>
+            <version>1.4.18</version>
         </dependency>
         <dependency>
-        	<groupId>io.reactivex</groupId>
-        	<artifactId>rxjava</artifactId>
-        	<version>1.0.14</version>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>1.0.14</version>
         </dependency>
         <dependency>
-        	<groupId>com.netflix.archaius</groupId>
-        	<artifactId>archaius-core</artifactId>
-        	<version>0.4.1</version>
+            <groupId>com.netflix.archaius</groupId>
+            <artifactId>archaius-core</artifactId>
+            <version>0.4.1</version>
         </dependency>
 
         <dependency>
@@ -135,6 +135,8 @@
             <plugin>
                 <groupId>com.boxfuse.client</groupId>
                 <artifactId>boxfuse-maven-plugin</artifactId>
+                <!--version>1.11.5.733</version-->
+                <!--version>1.12.0.751</version-->
                 <version>1.12.1.753</version>
                 <executions>
                     <execution>
