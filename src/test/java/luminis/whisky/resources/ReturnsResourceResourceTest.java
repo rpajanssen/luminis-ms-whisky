@@ -9,7 +9,7 @@ import org.junit.Test;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-// todo : add more test to cover more scenarios (007, 006)
+// todo : add more test to cover more scenarios (007, 006, status not returned)
 public class ReturnsResourceResourceTest {
 
     @Before

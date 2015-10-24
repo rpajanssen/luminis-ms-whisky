@@ -36,6 +36,7 @@ public class RestPostCommand<T> extends HystrixCommand<Response> {
 
             System.err.println(String.format("problem with service %s : %s ", service.getServiceID(), e.getMessage()));
 
+            // todo : should throw a ServiceNotAvailableException, handler should build this response!
             return Response
                     .status(Response.Status.SERVICE_UNAVAILABLE)
                     .entity(new ErrorMessageResponse(

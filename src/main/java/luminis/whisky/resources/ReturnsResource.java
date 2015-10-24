@@ -5,7 +5,9 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import luminis.whisky.command.RestPostCommand;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.core.consul.DyingServiceException;
+import luminis.whisky.domain.ErrorMessageResponse;
 import luminis.whisky.domain.OrderReturnRequest;
+import luminis.whisky.domain.OrderReturnResponse;
 import luminis.whisky.domain.Ping;
 import luminis.whisky.util.Metrics;
 import luminis.whisky.util.Service;
@@ -56,14 +58,33 @@ public class ReturnsResource {
             return response;
         }
 
-        // todo : what if state is not 'returned'?
+        // todo : throw exception or some other cleanup
+        if("returned".equalsIgnoreCase(((OrderReturnResponse)response.getEntity()).getState())) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(
+                            new ErrorMessageResponse(
+                                    Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
+                                    String.format("unable to cancel shipping")
+                            )
+                    ).build();
+        }
 
         response = callService(Service.BILLING, orderReturn);
         if(Response.Status.OK.getStatusCode()!=response.getStatus()) {
             return response;
         }
 
-        // todo : what if state is not 'returned'?
+        // todo : throw exception or some other cleanup
+        if("returned".equalsIgnoreCase(((OrderReturnResponse)response.getEntity()).getState())) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(
+                            new ErrorMessageResponse(
+                                    Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
+                                    String.format("unable to cancel billing")
+                            )
+                    ).build();
+        }
+
 
         return Response.status(Response.Status.OK).entity(orderReturn).build();
     }
