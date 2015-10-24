@@ -2,6 +2,7 @@ package luminis.whisky;
 
 import com.netflix.config.ConfigurationManager;
 import io.federecio.dropwizard.swagger.SwaggerDropwizard;
+import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.health.TemplateHealthCheck;
 import luminis.whisky.resources.*;
 import io.dropwizard.Application;
@@ -12,6 +13,7 @@ import luminis.whisky.resources.handlers.*;
 import luminis.whisky.resources.stubs.BillingStubResource;
 import luminis.whisky.resources.stubs.ShippingStubResource;
 import luminis.whisky.util.BoxFuseEnvironment;
+import luminis.whisky.util.Metrics;
 import org.apache.commons.configuration.MapConfiguration;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 
@@ -86,7 +88,8 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
     }
 
     private void registerReturns(Environment environment) {
-        environment.jersey().register(new ReturnsResource());
+        ConsulServiceUrlFinder consulServiceUrlFinder = new ConsulServiceUrlFinder();
+        environment.jersey().register(new ReturnsResource(consulServiceUrlFinder, new Metrics(consulServiceUrlFinder)));
     }
 
     private void registerExceptionHandlers(Environment environment) {

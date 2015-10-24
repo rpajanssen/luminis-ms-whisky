@@ -1,12 +1,10 @@
 package luminis.whisky.resources;
 
-import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import luminis.whisky.command.RestPostCommand;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.core.consul.DyingServiceException;
-import luminis.whisky.domain.ErrorMessageResponse;
 import luminis.whisky.domain.OrderReturnRequest;
 import luminis.whisky.domain.Ping;
 import luminis.whisky.util.Metrics;
@@ -18,15 +16,16 @@ import javax.ws.rs.core.Response;
 
 // todo : execute calls to billing / shipping concurrently
 // todo : fan out
+// todo : transaction rollback on failure
 @Path("/returns")
 @Api(value="Order returns", description = "Returns the order and cancels shipping and billing.")
 public class ReturnsResource {
-    private ConsulServiceUrlFinder consulServiceUrlFinder;
-    private Metrics metrics;
+    private final ConsulServiceUrlFinder consulServiceUrlFinder;
+    private final Metrics metrics;
 
-    public ReturnsResource() {
-        consulServiceUrlFinder = new ConsulServiceUrlFinder();
-        metrics = new Metrics(consulServiceUrlFinder);
+    public ReturnsResource(ConsulServiceUrlFinder consulServiceUrlFinder, Metrics metrics) {
+        this.consulServiceUrlFinder = consulServiceUrlFinder;
+        this.metrics = metrics;
     }
 
     @GET
@@ -52,16 +51,16 @@ public class ReturnsResource {
 
         metrics.increment(Service.RETURNS.getServiceID());
 
-        Response response = notify(Service.SHIPPING, orderReturn);
+        Response response = callService(Service.SHIPPING, orderReturn);
         if(Response.Status.OK.getStatusCode()!=response.getStatus()) {
-            return Response.status(response.getStatus()).entity(response.getEntity()).build();
+            return response;
         }
 
         // todo : what if state is not 'returned'?
 
-        response = notify(Service.BILLING, orderReturn);
+        response = callService(Service.BILLING, orderReturn);
         if(Response.Status.OK.getStatusCode()!=response.getStatus()) {
-            return Response.status(response.getStatus()).entity(response.getEntity()).build();
+            return response;
         }
 
         // todo : what if state is not 'returned'?
@@ -69,28 +68,11 @@ public class ReturnsResource {
         return Response.status(Response.Status.OK).entity(orderReturn).build();
     }
 
-    // todo : cleanup
-    private Response notify(Service service, final OrderReturnRequest orderReturn) throws DyingServiceException, InterruptedException {
-        String url = consulServiceUrlFinder.findServiceUrl(service.getServiceID());
+    private <T> Response callService(Service service, final T payload) throws DyingServiceException, InterruptedException {
+        String baseUrl = consulServiceUrlFinder.findServiceUrl(service.getServiceID());
 
-        try {
-            RestPostCommand<OrderReturnRequest> restPostCommand = new RestPostCommand<>(service, url, service.getServicePath(), orderReturn);
+        RestPostCommand<T> restPostCommand = new RestPostCommand<>(service, baseUrl, service.getServicePath(), payload);
 
-            return restPostCommand.execute();
-        } catch (HystrixRuntimeException e) {
-            if (e.getCause() instanceof InterruptedException) {
-                throw (InterruptedException) e.getCause();
-            }
-
-            System.err.println(String.format("problem with service %s : %s ", service.getServiceID(), e.getMessage()));
-
-            return Response
-                    .status(Response.Status.SERVICE_UNAVAILABLE)
-                    .entity(new ErrorMessageResponse(
-                                    Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
-                                    String.format("service %s unavailbale", service.getServiceID()))
-                    ).build();
-        }
-
+        return restPostCommand.execute();
     }
 }
