@@ -30,10 +30,11 @@
   <script type="text/javascript">
     $(function () {
       var url = window.location.search.match(/url=([^&]+)/);
+      //var url = window.location.protocol+"//" + window.location.host;
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-        url = "http://petstore.swagger.io/v2/swagger.json";
+        url = "http://localhost:80/v2/swagger.json";
       }
 
       // Pre load translate...

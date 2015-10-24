@@ -1,6 +1,8 @@
 package luminis.whisky.resources;
 
 import com.netflix.hystrix.exception.HystrixRuntimeException;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 import luminis.whisky.command.RestPostCommand;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.core.consul.DyingServiceException;
@@ -13,10 +15,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-// todo : swagger
-// todo : hystrix
 // todo : execute calls to billing / shipping concurrently
 @Path("/returns")
+@Api(value="Order returns", description = "Returns the order and cancels shipping and billing.")
 public class ReturnsResource {
     private ConsulServiceUrlFinder consulServiceUrlFinder;
     private Metrics metrics;
@@ -28,6 +29,10 @@ public class ReturnsResource {
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
+    @ApiOperation(
+            value = "Ping",
+            notes = "Simply returns pong."
+    )
     public Response ping() {
         return Response.status(Response.Status.OK).entity("pong").build();
     }
@@ -35,6 +40,10 @@ public class ReturnsResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @ApiOperation(
+            value = "Return order",
+            notes = "Cancels an order. Cancels the shipment and billing of the order."
+    )
     public Response returnOrder(final OrderReturn orderReturn) throws DyingServiceException, InterruptedException {
         System.out.println("Incoming return order call: " + orderReturn.getOrderNumber());
 
@@ -57,6 +66,7 @@ public class ReturnsResource {
         return Response.status(Response.Status.OK).entity(orderReturn).build();
     }
 
+    // todo : cleanup
     private Response notify(Service service, final OrderReturn orderReturn) throws DyingServiceException, InterruptedException {
         String url = consulServiceUrlFinder.findServiceUrl(service.getServiceID());
 

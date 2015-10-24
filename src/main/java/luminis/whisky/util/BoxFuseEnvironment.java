@@ -17,4 +17,20 @@ public class BoxFuseEnvironment {
         return !"prod".equalsIgnoreCase(System.getProperty("BOXFUSE_ENV"));
     }
 
+    public static int getHttpPort() {
+        if(System.getProperty("BOXFUSE_PORTS_HTTP")==null) {
+            return 80;
+        }
+
+        return Integer.valueOf(System.getProperty("BOXFUSE_PORTS_HTTP"));
+    }
+
+    public static int getForwardedHttpPort() {
+        if(System.getProperty("BOXFUSE_PORTS_FORWARDED_HTTP")==null) {
+            return 8888;
+        }
+
+        return Integer.valueOf(System.getProperty("BOXFUSE_PORTS_FORWARDED_HTTP"));
+    }
+
 }
