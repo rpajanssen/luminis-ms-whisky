@@ -135,9 +135,9 @@
             <plugin>
                 <groupId>com.boxfuse.client</groupId>
                 <artifactId>boxfuse-maven-plugin</artifactId>
-                <!--version>1.11.5.733</version-->
+                <version>1.11.5.733</version>
                 <!--version>1.12.0.751</version-->
-                <version>1.12.1.753</version>
+                <!--version>1.12.1.753</version-->
                 <executions>
                     <execution>
                         <id>fuse-image</id>
@@ -145,9 +145,6 @@
                             <goal>fuse</goal>
                         </goals>
                         <phase>package</phase>
-                        <configuration>
-                            <jvm.args>-Xmx64m</jvm.args>
-                        </configuration>
                     </execution>
                     <!-- only locally, travis ci does not support virtual box
                          so we run on a test environment in aws
