@@ -145,6 +145,9 @@
                             <goal>fuse</goal>
                         </goals>
                         <phase>package</phase>
+                        <configuration>
+                            <jvm.args>-Xmx64m</jvm.args>
+                        </configuration>
                     </execution>
                     <!-- only locally, travis ci does not support virtual box
                          so we run on a test environment in aws
