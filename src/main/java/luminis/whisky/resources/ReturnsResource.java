@@ -8,6 +8,7 @@ import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.core.consul.DyingServiceException;
 import luminis.whisky.domain.ErrorMessageResponse;
 import luminis.whisky.domain.OrderReturnRequest;
+import luminis.whisky.domain.Ping;
 import luminis.whisky.util.Metrics;
 import luminis.whisky.util.Service;
 
@@ -30,13 +31,13 @@ public class ReturnsResource {
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(
             value = "Ping",
             notes = "Simply returns pong."
     )
     public Response ping() {
-        return Response.status(Response.Status.OK).entity("pong").build();
+        return Response.status(Response.Status.OK).entity(new Ping("pong")).build();
     }
 
     @POST

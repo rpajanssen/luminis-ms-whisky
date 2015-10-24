@@ -59,12 +59,17 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
 
         registerExceptionHandlers(environment);
 
-        swaggerDropwizard.onRun(configuration, environment, "localhost", BoxFuseEnvironment.getForwardedHttpPort());
+        // todo : configure instead of hardcoding
+        if(BoxFuseEnvironment.isDevOrTest()) {
+            swaggerDropwizard.onRun(configuration, environment, "localhost", BoxFuseEnvironment.getForwardedHttpPort());
+        } else {
+            swaggerDropwizard.onRun(configuration, environment, "whiskyreturns-rpajanssen.boxfuse.io", BoxFuseEnvironment.getHttpPort());
+        }
     }
 
     // todo : delete this demo health check?
     private void registerDemoResource(Environment environment) {
-        String template = "Yoh, %s!";
+        String template = "Hi, %s!";
         environment.jersey().register(new DemoResource(template));
         environment.healthChecks().register("template", new TemplateHealthCheck(template));
     }

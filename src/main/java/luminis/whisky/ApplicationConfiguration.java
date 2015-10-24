@@ -15,4 +15,5 @@ public class ApplicationConfiguration extends Configuration {
     public Map<String, Object> getDefaultHystrixConfig() {
         return defaultHystrixConfig;
     }
+
 }

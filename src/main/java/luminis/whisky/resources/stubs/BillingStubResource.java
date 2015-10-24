@@ -1,6 +1,7 @@
 package luminis.whisky.resources.stubs;
 
 import luminis.whisky.domain.OrderReturnRequest;
+import luminis.whisky.domain.Ping;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -11,8 +12,9 @@ public class BillingStubResource {
 
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response ping() {
-        return Response.status(Response.Status.OK).entity("pong").build();
+        return Response.status(Response.Status.OK).entity(new Ping("pong")).build();
     }
 
     @POST
