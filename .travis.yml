@@ -4,4 +4,4 @@ env:
   global:
     - MAVEN_OPTS="-Xmx256m -XX:MaxMetaspaceSize=512m"
 install: mvn versions:set
-script: mvn -Xmx256m -XX:MaxMetaspaceSize=512m deploy
+script: mvn deploy
