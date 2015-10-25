@@ -1,6 +1,6 @@
 package luminis.whisky.util;
 
-public class BoxFuseEnvironment {
+public class RuntimeEnvironment {
     public static boolean isProd() {
         if(System.getProperty("BOXFUSE_ENV")==null) {
             return false;

@@ -1,6 +1,6 @@
 package luminis.whisky.cli;
 
-import luminis.whisky.util.BoxFuseEnvironment;
+import luminis.whisky.util.RuntimeEnvironment;
 import luminis.whisky.util.StreamGobbler;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.FileCopyUtils;
@@ -25,7 +25,7 @@ public class ConsulDeployer {
             boolean result = deployArtifact("consul/binary/consul", "consul/binary", "consul/binary/consul", Permission.EXECUTE);
 
             // deploy consul configuration
-            if(BoxFuseEnvironment.isProd()) {
+            if(RuntimeEnvironment.isProd()) {
                 result = result && deployArtifact("consul/config/prod_config.json", "consul/config", "consul/config/config.json", Permission.READ);
             } else {
                 // todo : local with local external server
@@ -106,7 +106,7 @@ public class ConsulDeployer {
     private static void runConsul(boolean deployed) {
         if (deployed) {
             System.out.println("starting deployed consul");
-            if(BoxFuseEnvironment.isProd()) {
+            if(RuntimeEnvironment.isProd()) {
                 // run with agent only
                 runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/binary/consul agent -data-dir=./consul -config-dir=./consul/config"});
             } else {

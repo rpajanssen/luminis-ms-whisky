@@ -59,7 +59,7 @@ public class ReturnsResource {
         }
 
         // todo : throw exception or some other cleanup
-        if("returned".equalsIgnoreCase(((OrderReturnResponse)response.getEntity()).getState())) {
+        if("returned".equalsIgnoreCase(response.readEntity(OrderReturnResponse.class).getState())) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(
                             new ErrorMessageResponse(
@@ -76,7 +76,7 @@ public class ReturnsResource {
         }
 
         // todo : throw exception or some other cleanup
-        if("returned".equalsIgnoreCase(((OrderReturnResponse)response.getEntity()).getState())) {
+        if("returned".equalsIgnoreCase(response.readEntity(OrderReturnResponse.class).getState())) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(
                             new ErrorMessageResponse(

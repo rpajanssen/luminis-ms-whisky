@@ -1,5 +1,6 @@
 package luminis.whisky.resources.handlers;
 
+import luminis.whisky.command.ThreadInterruptedException;
 import luminis.whisky.domain.ErrorMessageResponse;
 
 import javax.ws.rs.core.Response;
@@ -7,9 +8,9 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class InterruptedExceptionHandler implements ExceptionMapper<InterruptedException>{
+public class InterruptedExceptionHandler implements ExceptionMapper<ThreadInterruptedException>{
     @Override
-    public Response toResponse(InterruptedException e) {
+    public Response toResponse(luminis.whisky.command.ThreadInterruptedException e) {
         System.err.println(String.format("unexpected exception occurred : %s ", e.getMessage()));
 
         return Response

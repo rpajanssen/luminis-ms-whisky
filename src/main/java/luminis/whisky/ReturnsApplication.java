@@ -12,7 +12,7 @@ import luminis.whisky.cli.ConsulDeployer;
 import luminis.whisky.resources.handlers.*;
 import luminis.whisky.resources.stubs.BillingStubResource;
 import luminis.whisky.resources.stubs.ShippingStubResource;
-import luminis.whisky.util.BoxFuseEnvironment;
+import luminis.whisky.util.RuntimeEnvironment;
 import luminis.whisky.util.Metrics;
 import org.apache.commons.configuration.MapConfiguration;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -62,10 +62,10 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
         registerExceptionHandlers(environment);
 
         // todo : configure instead of hardcoding
-        if(BoxFuseEnvironment.isDevOrTest()) {
-            swaggerDropwizard.onRun(configuration, environment, "localhost", BoxFuseEnvironment.getForwardedHttpPort());
+        if(RuntimeEnvironment.isDevOrTest()) {
+            swaggerDropwizard.onRun(configuration, environment, "localhost", RuntimeEnvironment.getForwardedHttpPort());
         } else {
-            swaggerDropwizard.onRun(configuration, environment, "whiskyreturns-rpajanssen.boxfuse.io", BoxFuseEnvironment.getHttpPort());
+            swaggerDropwizard.onRun(configuration, environment, "whiskyreturns-rpajanssen.boxfuse.io", RuntimeEnvironment.getHttpPort());
         }
     }
 
@@ -81,7 +81,7 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
     }
 
     private void optionallyRegisterStubs(Environment environment) {
-        if(BoxFuseEnvironment.isDevOrTest()) {
+        if(RuntimeEnvironment.isDevOrTest()) {
             environment.jersey().register(new ShippingStubResource());
             environment.jersey().register(new BillingStubResource());
         }
