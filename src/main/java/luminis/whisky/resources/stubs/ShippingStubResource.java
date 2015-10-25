@@ -2,6 +2,7 @@ package luminis.whisky.resources.stubs;
 
 import luminis.whisky.domain.ErrorMessageResponse;
 import luminis.whisky.domain.OrderReturnRequest;
+import luminis.whisky.domain.OrderReturnResponse;
 import luminis.whisky.domain.Ping;
 
 import javax.ws.rs.*;
@@ -41,6 +42,6 @@ public class ShippingStubResource {
             }
         }
 
-        return Response.status(Response.Status.OK).entity(orderReturn).build();
+        return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState("returned")).build();
     }
 }

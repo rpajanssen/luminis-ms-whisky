@@ -9,7 +9,6 @@ import org.junit.Test;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-// todo : add more test to cover more scenarios (007, 006, status not returned)
 public class ReturnsResourceResourceTest {
 
     @Before
@@ -37,7 +36,7 @@ public class ReturnsResourceResourceTest {
     }
 
     @Test
-    public void should_return_error() {
+    public void should_return_404() {
         given()
                 .contentType("application/json")
                 .body("{\"orderNumber\":\"666\"}")
@@ -45,5 +44,38 @@ public class ReturnsResourceResourceTest {
         .post(Service.RETURNS.getServicePath())
 
         .then().assertThat().content(equalTo("{\"code\":404,\"description\":\"No shipments for order 666 found.\"}"));
+    }
+
+    @Test
+    public void should_return_billing_unavailable() {
+        given()
+                .contentType("application/json")
+                .body("{\"orderNumber\":\"007\"}")
+
+                .post(Service.RETURNS.getServicePath())
+
+                .then().assertThat().content(equalTo("{\"code\":4102,\"description\":\"service billing unavailable\"}"));
+    }
+
+    @Test
+    public void should_return_shipping_unavailable() {
+        given()
+                .contentType("application/json")
+                .body("{\"orderNumber\":\"006\"}")
+
+                .post(Service.RETURNS.getServicePath())
+
+                .then().assertThat().content(equalTo("{\"code\":4102,\"description\":\"service shipping unavailable\"}"));
+    }
+
+    @Test
+    public void should_return_cancellation_with_incorrect_state() {
+        given()
+                .contentType("application/json")
+                .body("{\"orderNumber\":\"111\"}")
+
+                .post(Service.RETURNS.getServicePath())
+
+                .then().assertThat().content(equalTo("{\"code\":4001,\"description\":\"unable to cancel billing for order 111, resulting state was a-horrible-state\"}"));
     }
 }

@@ -1,23 +1,23 @@
 package luminis.whisky.core.consul;
 
-public class ServiceConfiguration {
+public class ConsulServiceConfiguration {
     private String protocol = "http";
     private String address = "localhost";
     private int port = 80;
 
-    ServiceConfiguration withProtocol(String protocol) {
+    ConsulServiceConfiguration withProtocol(String protocol) {
         this.protocol = protocol;
 
         return this;
     }
 
-    ServiceConfiguration withAddress(String address) {
+    ConsulServiceConfiguration withAddress(String address) {
         this.address = address;
 
         return this;
     }
 
-    ServiceConfiguration withPort(int port) {
+    ConsulServiceConfiguration withPort(int port) {
         this.port = port;
 
         return this;

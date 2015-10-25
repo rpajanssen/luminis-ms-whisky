@@ -1,6 +1,6 @@
 package luminis.whisky.client;
 
-import luminis.whisky.core.consul.ConsulConfiguration;
+import luminis.whisky.core.consul.ConsulAgentConfiguration;
 import org.glassfish.jersey.client.ClientConfig;
 
 import javax.ws.rs.client.Client;
@@ -82,6 +82,6 @@ public class ConsulClient {
     private WebTarget getWebTarget() {
         ClientConfig config = new ClientConfig();
         Client client = ClientBuilder.newClient(config);
-        return client.target(ConsulConfiguration.getInstance().getBaseURI());
+        return client.target(ConsulAgentConfiguration.getInstance().getBaseURI());
     }
 }

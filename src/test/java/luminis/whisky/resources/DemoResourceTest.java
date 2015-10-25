@@ -29,6 +29,6 @@ public class DemoResourceTest {
 
     @Test
     public void should_return_pretty_error_message() {
-        get("?name=xess").then().assertThat().content(equalTo("{\"code\":500,\"description\":\"Unexpected exception occurred: Unbelievable name has been rejected!\"}"));
+        get("?name=xess").then().assertThat().content(equalTo("{\"code\":4501,\"description\":\"unexpected exception occurred : Unbelievable name has been rejected! \"}"));
     }
 }

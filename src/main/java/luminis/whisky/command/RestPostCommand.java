@@ -9,6 +9,11 @@ import luminis.whisky.util.Service;
 
 import javax.ws.rs.core.Response;
 
+/**
+ * Hystrix command implementation that posts a rest-call to a service.
+ *
+ * @param <T> the payload of the post
+ */
 public class RestPostCommand<T> extends HystrixCommand<Response> {
     private final RestClient<T> restClient;
     private final Service service;
@@ -25,24 +30,41 @@ public class RestPostCommand<T> extends HystrixCommand<Response> {
         return restClient.post();
     }
 
+    /**
+     * Returns the response from the called service.
+     *
+     * Throws ThreadInterruptedException when this service was interrupted (Hystrix).
+     * Throws ServiceResultException when the response status is not OK.
+     * Throws ServiceNotAvailableException when the service to call is not available.
+     *
+     * @return Response The response of the called service
+     */
     @Override
     public Response execute() {
         try {
-            return super.execute();
+            Response response =  super.execute();
+
+            ifResponseStatusNotOKThenThrowException(response);
+
+            return response;
         } catch (HystrixRuntimeException e) {
-            if (e.getCause() instanceof InterruptedException) {
-                throw new ThreadInterruptedException(e.getCause().getMessage(), e.getCause());
-            }
+            ifCausedByInterruptThenThrowInterruptedException(e);
 
+            // service is not available
             System.err.println(String.format("problem with service %s : %s ", service.getServiceID(), e.getMessage()));
+            throw new UnavailableServiceException(service, e.getMessage());
+        }
+    }
 
-            // todo : should throw a ServiceNotAvailableException, handler should build this response!
-            return Response
-                    .status(Response.Status.SERVICE_UNAVAILABLE)
-                    .entity(new ErrorMessageResponse(
-                                    Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
-                                    String.format("service %s unavailbale", service.getServiceID()))
-                    ).build();
+    private void ifResponseStatusNotOKThenThrowException(Response response) {
+        if(Response.Status.OK.getStatusCode()!=response.getStatus()) {
+            throw new ServiceResultException(response.getStatus(), response.readEntity(ErrorMessageResponse.class), service);
+        }
+    }
+
+    private void ifCausedByInterruptThenThrowInterruptedException(HystrixRuntimeException e) {
+        if (e.getCause() instanceof InterruptedException) {
+            throw new ThreadInterruptedException(e.getCause().getMessage(), e.getCause());
         }
     }
 }

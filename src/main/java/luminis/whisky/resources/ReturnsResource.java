@@ -5,10 +5,10 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import luminis.whisky.command.RestPostCommand;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.core.consul.DyingServiceException;
-import luminis.whisky.domain.ErrorMessageResponse;
 import luminis.whisky.domain.OrderReturnRequest;
 import luminis.whisky.domain.OrderReturnResponse;
 import luminis.whisky.domain.Ping;
+import luminis.whisky.resources.exception.UnableToCancelException;
 import luminis.whisky.util.Metrics;
 import luminis.whisky.util.Service;
 
@@ -49,44 +49,15 @@ public class ReturnsResource {
             notes = "Cancels an order. Cancels the shipment and billing of the order."
     )
     public Response returnOrder(final OrderReturnRequest orderReturn) throws DyingServiceException, InterruptedException {
-        System.out.println("Incoming return order call: " + orderReturn.getOrderNumber());
+        System.out.println(String.format("incoming return order call for order %s", orderReturn.getOrderNumber()));
 
         metrics.increment(Service.RETURNS.getServiceID());
 
         Response response = callService(Service.SHIPPING, orderReturn);
-        if(Response.Status.OK.getStatusCode()!=response.getStatus()) {
-            return response;
-        }
-
-        // todo : throw exception or some other cleanup
-        if("returned".equalsIgnoreCase(response.readEntity(OrderReturnResponse.class).getState())) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(
-                            new ErrorMessageResponse(
-                                    // todo : different status code (align with guys from luminis)
-                                    Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
-                                    String.format("unable to cancel shipping")
-                            )
-                    ).build();
-        }
+        ifOrderStateNotReturnedThrowException(Service.SHIPPING, response);
 
         response = callService(Service.BILLING, orderReturn);
-        if(Response.Status.OK.getStatusCode()!=response.getStatus()) {
-            return response;
-        }
-
-        // todo : throw exception or some other cleanup
-        if("returned".equalsIgnoreCase(response.readEntity(OrderReturnResponse.class).getState())) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(
-                            new ErrorMessageResponse(
-                                    // todo : different status code (align with guys from luminis)
-                                    Response.Status.SERVICE_UNAVAILABLE.getStatusCode(),
-                                    String.format("unable to cancel billing but cancellation of shipping has succeeded")
-                            )
-                    ).build();
-        }
-
+        ifOrderStateNotReturnedThrowException(Service.BILLING, response);
 
         return Response.status(Response.Status.OK).entity(orderReturn).build();
     }
@@ -97,5 +68,12 @@ public class ReturnsResource {
         RestPostCommand<T> restPostCommand = new RestPostCommand<>(service, baseUrl, service.getServicePath(), payload);
 
         return restPostCommand.execute();
+    }
+
+    private void ifOrderStateNotReturnedThrowException(Service service, Response response) {
+        OrderReturnResponse orderReturnResponse = response.readEntity(OrderReturnResponse.class);
+        if(!"returned".equalsIgnoreCase(orderReturnResponse.getState())) {
+            throw new UnableToCancelException(service, orderReturnResponse);
+        }
     }
 }

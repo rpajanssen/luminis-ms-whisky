@@ -1,8 +1,8 @@
 package luminis.whisky.util;
 
 import luminis.whisky.client.StatsdClient;
+import luminis.whisky.core.consul.ConsulServiceConfiguration;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
-import luminis.whisky.core.consul.ServiceConfiguration;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -32,7 +32,7 @@ public class Metrics {
     @PostConstruct
     public void setup() {
         try {
-            ServiceConfiguration serviceConfiguration = consulServiceUrlFinder.findServiceConfiguration(Service.METRICS.getServiceID());
+            ConsulServiceConfiguration serviceConfiguration = consulServiceUrlFinder.findServiceConfiguration(Service.METRICS.getServiceID());
             System.out.println("Found statsd ip and port: " + serviceConfiguration.getAddress() +":"+ serviceConfiguration.getPort());
             statsdClient = new StatsdClient(serviceConfiguration.getAddress(), serviceConfiguration.getPort());
         } catch(Exception e) {

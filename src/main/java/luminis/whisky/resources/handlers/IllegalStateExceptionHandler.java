@@ -1,6 +1,7 @@
 package luminis.whisky.resources.handlers;
 
 import luminis.whisky.domain.ErrorMessageResponse;
+import luminis.whisky.resources.exception.ErrorCode;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -10,10 +11,14 @@ import javax.ws.rs.ext.Provider;
 public class IllegalStateExceptionHandler implements ExceptionMapper<IllegalStateException>{
     @Override
     public Response toResponse(IllegalStateException e) {
-        System.err.println(String.format("unexpected exception occurred : %s ", e.getMessage()));
+        System.err.println(String.format(ErrorCode.UEE.getMessage(), e.getMessage()));
 
         return Response
-                .status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(new ErrorMessageResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), e.getMessage())).build();
+                .status(ErrorCode.UEE.getResponseStatus())
+                .entity(new ErrorMessageResponse(
+                                ErrorCode.UEE.getCode(),
+                                String.format(ErrorCode.UEE.getMessage(), e.getMessage())
+                        )
+                ).build();
     }
 }

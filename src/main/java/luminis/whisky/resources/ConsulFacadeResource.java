@@ -3,7 +3,7 @@ package luminis.whisky.resources;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import luminis.whisky.client.ConsulClient;
-import luminis.whisky.core.consul.ConsulConfiguration;
+import luminis.whisky.core.consul.ConsulAgentConfiguration;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -36,7 +36,7 @@ public class ConsulFacadeResource {
             notes = ""
     )
     public Response ip(@PathParam("address") final String address) {
-        ConsulConfiguration.getInstance().setIp(address);
+        ConsulAgentConfiguration.getInstance().setIp(address);
 
         return Response.status(Response.Status.OK).entity("Host set to " + address).build();
     }
@@ -48,7 +48,7 @@ public class ConsulFacadeResource {
             notes = ""
     )
     public Response port(@PathParam("port") final String port) {
-        ConsulConfiguration.getInstance().setPort(port);
+        ConsulAgentConfiguration.getInstance().setPort(port);
 
         return Response.status(Response.Status.OK).entity("Port set to " + port).build();
     }

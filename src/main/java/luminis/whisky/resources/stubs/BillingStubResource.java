@@ -1,6 +1,7 @@
 package luminis.whisky.resources.stubs;
 
 import luminis.whisky.domain.OrderReturnRequest;
+import luminis.whisky.domain.OrderReturnResponse;
 import luminis.whisky.domain.Ping;
 
 import javax.ws.rs.*;
@@ -30,6 +31,10 @@ public class BillingStubResource {
             }
         }
 
-        return Response.status(Response.Status.OK).entity(orderReturn).build();
+        if("111".equals(orderReturn.getOrderNumber())) {
+            return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState("a-horrible-state")).build();
+        }
+
+        return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState("returned")).build();
     }
 }

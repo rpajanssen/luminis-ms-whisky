@@ -61,7 +61,7 @@ public class ConsulServiceUrlFinder {
         throw new DyingServiceException(String.format("service %s unhealthy and not available", serviceId));
     }
 
-    public ServiceConfiguration findServiceConfiguration(String serviceId) throws DyingServiceException {
+    public ConsulServiceConfiguration findServiceConfiguration(String serviceId) throws DyingServiceException {
         String node = getHealthyNode(serviceId);
         if(node!=null) {
             String jsonResponse = consulClient.catalogService(serviceId);
@@ -74,8 +74,8 @@ public class ConsulServiceUrlFinder {
                         String serviceAddress = (String) ((JSONObject) response.get(0)).get("ServiceAddress");
                         String servicePort = String.valueOf(((JSONObject) response.get(0)).get("ServicePort"));
 
-                        ServiceConfiguration serviceConfiguration =
-                                new ServiceConfiguration()
+                        ConsulServiceConfiguration serviceConfiguration =
+                                new ConsulServiceConfiguration()
                                 .withAddress(ifNotNullAElseB(serviceAddress, address))
                                 .withPort(Integer.valueOf(ifNotNullAElseB(servicePort, "80")));
 
@@ -94,10 +94,10 @@ public class ConsulServiceUrlFinder {
 
             System.out.println(String.format("Missing service configuration [%s] in Consul services configuration. Using defaults.", serviceId));
 
-            return new ServiceConfiguration();
+            return new ConsulServiceConfiguration();
         }
 
-        throw new DyingServiceException(String.format("service %s unhealthy and not available", serviceId));
+        throw new DyingServiceException(serviceId);
     }
 
     private String getHealthyNode(String serviceId) {

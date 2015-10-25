@@ -14,6 +14,12 @@ public class OrderReturnResponse {
     @XmlElement
     private String state;
 
+    public OrderReturnResponse() {}
+
+    public OrderReturnResponse(OrderReturnRequest returnRequest) {
+        this.orderNumber = returnRequest.getOrderNumber();
+    }
+
     public String getOrderNumber() {
         return orderNumber;
     }
@@ -28,5 +34,10 @@ public class OrderReturnResponse {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public OrderReturnResponse withState(String state) {
+        this.state = state;
+        return this;
     }
 }

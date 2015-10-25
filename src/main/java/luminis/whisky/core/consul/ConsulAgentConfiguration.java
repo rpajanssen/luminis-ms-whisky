@@ -4,8 +4,8 @@ package luminis.whisky.core.consul;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 
-public final class ConsulConfiguration {
-    private static final ConsulConfiguration instance = new ConsulConfiguration();
+public final class ConsulAgentConfiguration {
+    private static final ConsulAgentConfiguration instance = new ConsulAgentConfiguration();
 
     private static final String CONSUL_BASE_URI = "%s://%s:%s";
 
@@ -13,9 +13,9 @@ public final class ConsulConfiguration {
     private String ip = "localhost";
     private String port = "8500";
 
-    private ConsulConfiguration() {}
+    private ConsulAgentConfiguration() {}
 
-    public static ConsulConfiguration getInstance() {
+    public static ConsulAgentConfiguration getInstance() {
         return instance;
     }
 

@@ -11,14 +11,13 @@ import javax.ws.rs.ext.Provider;
 public class InterruptedExceptionHandler implements ExceptionMapper<ThreadInterruptedException>{
     @Override
     public Response toResponse(luminis.whisky.command.ThreadInterruptedException e) {
-        System.err.println(String.format("unexpected exception occurred : %s ", e.getMessage()));
+        System.err.println(String.format(e.getErrorCode().getMessage(), e.getMessage()));
 
         return Response
-                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                .status(e.getErrorCode().getResponseStatus())
                 .entity(new ErrorMessageResponse(
-                                Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                                String.format("Unexpected exception occurred: %s", e.getMessage()
-                                )
+                                e.getErrorCode().getCode(),
+                                String.format(e.getErrorCode().getMessage(), e.getMessage())
                         )
                 ).build();
     }
