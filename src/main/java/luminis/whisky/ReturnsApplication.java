@@ -61,6 +61,8 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
 
         registerExceptionHandlers(environment);
 
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!  INSTANCE URL = " + System.getProperty("instanceUrl"));
+
         // todo : use configuration instead of hardcoding
         if(RuntimeEnvironment.isDevOrTest()) {
             if(RuntimeEnvironment.isRunningOnAWS()) {

@@ -13,6 +13,8 @@ public class ExceptionHandler implements ExceptionMapper<Exception>{
     public Response toResponse(Exception e) {
         System.err.println(String.format(ErrorCode.UEE.getMessage(), e.getMessage()));
 
+        e.printStackTrace();
+
         return Response
                 .status(ErrorCode.UEE.getResponseStatus())
                 .entity(new ErrorMessageResponse(
