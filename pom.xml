@@ -192,9 +192,8 @@
                         </goals>
                         <phase>deploy</phase>
                         <configuration>
-                            <!-- todo -->
                             <env>test</env>
-                            <!--env>prod</env-->
+                            <jvm.args>-DhostedEnv=AWS</jvm.args>
                             <ports>
                                 <consul-http>9500</consul-http>
                                 <consul-dns>9600</consul-dns>

@@ -63,15 +63,19 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
 
         // todo : configure instead of hardcoding
         if(RuntimeEnvironment.isDevOrTest()) {
-            swaggerDropwizard.onRun(configuration, environment, "localhost", RuntimeEnvironment.getForwardedHttpPort());
+            if(RuntimeEnvironment.isRunningOnAWS()) {
+                swaggerDropwizard.onRun(configuration, environment, "whiskyreturns-rpajanssen.boxfuse.io", RuntimeEnvironment.getHttpPort());
+            } else {
+                swaggerDropwizard.onRun(configuration, environment, "localhost", RuntimeEnvironment.getForwardedHttpPort());
+            }
         } else {
             swaggerDropwizard.onRun(configuration, environment, "whiskyreturns-rpajanssen.boxfuse.io", RuntimeEnvironment.getHttpPort());
         }
     }
 
     private void configureCORS(Environment environment) {
-        final FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS",
-                CrossOriginFilter.class);
+        final FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
+
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
         filter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,DELETE,OPTIONS");
         filter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
