@@ -173,7 +173,25 @@
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <env>test</env>
-                            <jvm.args>-DhostedEnv=AWS -DrunConsulServer=true</jvm.args>
+                            <envvars>
+                                <CONSUL_SERVER>true</CONSUL_SERVER>
+                            </envvars>
+                            <ports>
+                                <consul-http>9500</consul-http>
+                                <consul-dns>9600</consul-dns>
+                                <consul-cli-rpc>9400</consul-cli-rpc>
+                                <consul-rpc>9300</consul-rpc>
+                                <consul-lan>9301</consul-lan>
+                                <consul-wan>9302</consul-wan>
+                            </ports>
+                            <portsmap>
+                                <consul-http>59500</consul-http>
+                                <consul-dns>59600</consul-dns>
+                                <consul-cli-rpc>59400</consul-cli-rpc>
+                                <consul-rpc>59300</consul-rpc>
+                                <consul-lan>59301</consul-lan>
+                                <consul-wan>59302</consul-wan>
+                            </portsmap>
                         </configuration>
                     </execution>
                     <execution>
@@ -194,7 +212,9 @@
                         <phase>deploy</phase>
                         <configuration>
                             <env>test</env>
-                            <jvm.args>-DhostedEnv=AWS -DrunConsulServer=true</jvm.args>
+                            <envvars>
+                                <CONSUL_SERVER>true</CONSUL_SERVER>
+                            </envvars>
                             <ports>
                                 <consul-http>9500</consul-http>
                                 <consul-dns>9600</consul-dns>

@@ -66,10 +66,6 @@ public class RuntimeEnvironment {
     }
 
     public static boolean isRunningConsulServer() {
-        System.out.println("-- CONSUL_SERVER=" + System.getProperty("CONSUL_SERVER"));
-
-        System.getProperties().list(System.out);
-
         if(System.getProperty("CONSUL_SERVER")==null) {
             return false;
         }
