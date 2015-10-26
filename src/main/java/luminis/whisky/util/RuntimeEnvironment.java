@@ -58,14 +58,19 @@ public class RuntimeEnvironment {
     }
 
     public static boolean isRunningOnAWS() {
-        if(System.getProperty("hostedEnv")==null) {
+        if(System.getProperty("BOXFUSE_PLATFORM_NAME")==null) {
             return false;
         }
 
-        return "AWS".equalsIgnoreCase(System.getProperty("hostedEnv"));
+        return "AWS".equalsIgnoreCase(System.getProperty("BOXFUSE_PLATFORM_NAME"));
     }
 
     public static boolean isRunningConsulServer() {
+        System.out.println("-- runConsulServer=" + System.getProperty("runConsulServer"));
+        System.out.println("-- CONSUL_SERVER=" + System.getProperty("CONSUL_SERVER"));
+
+        System.getProperties().list(System.out);
+
         if(System.getProperty("runConsulServer")==null) {
             return false;
         }

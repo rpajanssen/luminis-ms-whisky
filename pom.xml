@@ -173,7 +173,10 @@
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <env>test</env>
-                            <jvm.args>-DhostedEnv=AWS -DrunConsulServer=true</jvm.args>
+                            <envvars>
+                                <CONSUL_SERVER>true</CONSUL_SERVER>
+                            </envvars>
+                            <jvm.args>-DrunConsulServer=true</jvm.args>
                             <ports>
                                 <consul-http>9500</consul-http>
                                 <consul-dns>9600</consul-dns>
@@ -211,7 +214,10 @@
                         <phase>deploy</phase>
                         <configuration>
                             <env>test</env>
-                            <jvm.args>-DhostedEnv=AWS -DrunConsulServer=true</jvm.args>
+                            <envvars>
+                                <CONSUL_SERVER>true</CONSUL_SERVER>
+                            </envvars>
+                            <jvm.args>-DrunConsulServer=true</jvm.args>
                             <ports>
                                 <consul-http>9500</consul-http>
                                 <consul-dns>9600</consul-dns>
