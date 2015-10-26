@@ -61,10 +61,10 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
 
         registerExceptionHandlers(environment);
 
-        // todo : configure instead of hardcoding
+        // todo : use configuration instead of hardcoding
         if(RuntimeEnvironment.isDevOrTest()) {
             if(RuntimeEnvironment.isRunningOnAWS()) {
-                swaggerDropwizard.onRun(configuration, environment, "whiskyreturns-rpajanssen.boxfuse.io", RuntimeEnvironment.getHttpPort());
+                swaggerDropwizard.onRun(configuration, environment, String.format("whiskyreturns-%s-rpajanssen.boxfuse.io", RuntimeEnvironment.getEnv().toLowerCase()), RuntimeEnvironment.getHttpPort());
             } else {
                 swaggerDropwizard.onRun(configuration, environment, "localhost", RuntimeEnvironment.getForwardedHttpPort());
             }

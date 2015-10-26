@@ -9,12 +9,36 @@ public class RuntimeEnvironment {
         return "prod".equalsIgnoreCase(System.getProperty("BOXFUSE_ENV"));
     }
 
+    public static boolean isTest() {
+        if(System.getProperty("BOXFUSE_ENV")==null) {
+            return true;
+        }
+
+        return !"test".equalsIgnoreCase(System.getProperty("BOXFUSE_ENV"));
+    }
+
+    public static boolean isDev() {
+        if(System.getProperty("BOXFUSE_ENV")==null) {
+            return true;
+        }
+
+        return !"dev".equalsIgnoreCase(System.getProperty("BOXFUSE_ENV"));
+    }
+
     public static boolean isDevOrTest() {
         if(System.getProperty("BOXFUSE_ENV")==null) {
             return true;
         }
 
         return !"prod".equalsIgnoreCase(System.getProperty("BOXFUSE_ENV"));
+    }
+
+    public static String getEnv() {
+        if(System.getProperty("BOXFUSE_ENV")==null) {
+            return "test";
+        }
+
+        return System.getProperty("BOXFUSE_ENV");
     }
 
     public static int getHttpPort() {
@@ -39,7 +63,6 @@ public class RuntimeEnvironment {
         }
 
         return "AWS".equalsIgnoreCase(System.getProperty("hostedEnv"));
-        //
     }
 
 }
