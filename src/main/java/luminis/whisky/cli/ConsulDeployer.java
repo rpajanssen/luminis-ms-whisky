@@ -108,15 +108,18 @@ public class ConsulDeployer {
             System.out.println("starting deployed consul");
             if(RuntimeEnvironment.isProd()) {
                 // run with agent only
+                System.out.println("... run Consul agent only on prod");
                 runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/binary/consul agent -data-dir=./consul -config-dir=./consul/config"});
             } else {
-
-                // todo : additional system property to check if in dev/test we want to run a server or not
-                // with advertise of local agents ip address ( luminis office, local vm)
-                //runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/consul agent -advertise 10.1.17.180 -data-dir=./consul -config-dir=./consul/config"});
-
-                // run with agent as server
-                runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/binary/consul agent -data-dir=./consul -config-dir=./consul/config -server -bootstrap-expect 1 -ui-dir ./consul/dist"});
+                if (RuntimeEnvironment.isRunningConsulServer()) {
+                    // run with agent as server
+                    System.out.println("... run Consul server and agent on local/dev/test");
+                    runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/binary/consul agent -data-dir=./consul -config-dir=./consul/config -server -bootstrap-expect 1 -ui-dir ./consul/dist"});
+                } else {
+                    // with advertise of local agents ip address ( luminis office, local vm)
+                    System.out.println("... run Consul agent only with advertising on local/dev/test");
+                    runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/consul agent -advertise 10.1.17.180 -data-dir=./consul -config-dir=./consul/config"});
+                }
             }
         } else {
             System.out.println("crossing our fingers that consul is available from the command line");

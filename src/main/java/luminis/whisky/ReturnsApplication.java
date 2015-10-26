@@ -64,12 +64,23 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
         // todo : use configuration instead of hardcoding
         if(RuntimeEnvironment.isDevOrTest()) {
             if(RuntimeEnvironment.isRunningOnAWS()) {
-                swaggerDropwizard.onRun(configuration, environment, String.format("whiskyreturns-%s-rpajanssen.boxfuse.io", RuntimeEnvironment.getEnv().toLowerCase()), RuntimeEnvironment.getHttpPort());
+                System.out.println("running swagger for dev/test on AWS");
+                swaggerDropwizard.onRun(
+                        configuration, environment,
+                        String.format("%s-%s-%s.boxfuse.io", RuntimeEnvironment.getApp(), RuntimeEnvironment.getEnv().toLowerCase(), RuntimeEnvironment.getAccount()),
+                        RuntimeEnvironment.getHttpPort()
+                );
             } else {
+                System.out.println("running swagger for local dev/test deploy");
                 swaggerDropwizard.onRun(configuration, environment, "localhost", RuntimeEnvironment.getForwardedHttpPort());
             }
         } else {
-            swaggerDropwizard.onRun(configuration, environment, "whiskyreturns-rpajanssen.boxfuse.io", RuntimeEnvironment.getHttpPort());
+            System.out.println("running swagger for prod, assuming deployed on AWS");
+            swaggerDropwizard.onRun(
+                    configuration, environment,
+                    String.format("%s-%s.boxfuse.io", RuntimeEnvironment.getApp(), RuntimeEnvironment.getAccount()),
+                    RuntimeEnvironment.getHttpPort()
+            );
         }
     }
 

@@ -14,7 +14,7 @@ public class RuntimeEnvironment {
             return true;
         }
 
-        return !"test".equalsIgnoreCase(System.getProperty("BOXFUSE_ENV"));
+        return "test".equalsIgnoreCase(System.getProperty("BOXFUSE_ENV"));
     }
 
     public static boolean isDev() {
@@ -22,7 +22,7 @@ public class RuntimeEnvironment {
             return true;
         }
 
-        return !"dev".equalsIgnoreCase(System.getProperty("BOXFUSE_ENV"));
+        return "dev".equalsIgnoreCase(System.getProperty("BOXFUSE_ENV"));
     }
 
     public static boolean isDevOrTest() {
@@ -65,4 +65,19 @@ public class RuntimeEnvironment {
         return "AWS".equalsIgnoreCase(System.getProperty("hostedEnv"));
     }
 
+    public static boolean isRunningConsulServer() {
+        if(System.getProperty("runConsulServer")==null) {
+            return false;
+        }
+
+        return Boolean.getBoolean(System.getProperty("runConsulServer"));
+    }
+
+    public static String getAccount() {
+        return String.valueOf(System.getProperty("BOXFUSE_ACCOUNT"));
+    }
+
+    public static String getApp() {
+        return String.valueOf(System.getProperty("BOXFUSE_APP"));
+    }
 }
