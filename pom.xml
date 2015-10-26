@@ -176,7 +176,6 @@
                             <envvars>
                                 <CONSUL_SERVER>true</CONSUL_SERVER>
                             </envvars>
-                            <jvm.args>-DrunConsulServer=true</jvm.args>
                             <ports>
                                 <consul-http>9500</consul-http>
                                 <consul-dns>9600</consul-dns>
@@ -195,7 +194,6 @@
                             </portsmap>
                         </configuration>
                     </execution>
-                    <!--
                     <execution>
                         <id>kill-on-test</id>
                         <goals>
@@ -217,7 +215,6 @@
                             <envvars>
                                 <CONSUL_SERVER>true</CONSUL_SERVER>
                             </envvars>
-                            <jvm.args>-DrunConsulServer=true</jvm.args>
                             <ports>
                                 <consul-http>9500</consul-http>
                                 <consul-dns>9600</consul-dns>
@@ -236,7 +233,6 @@
                             </portsmap>
                         </configuration>
                     </execution>
-                    -->
                 </executions>
             </plugin>
             <plugin>

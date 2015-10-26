@@ -66,16 +66,15 @@ public class RuntimeEnvironment {
     }
 
     public static boolean isRunningConsulServer() {
-        System.out.println("-- runConsulServer=" + System.getProperty("runConsulServer"));
         System.out.println("-- CONSUL_SERVER=" + System.getProperty("CONSUL_SERVER"));
 
         System.getProperties().list(System.out);
 
-        if(System.getProperty("runConsulServer")==null) {
+        if(System.getProperty("CONSUL_SERVER")==null) {
             return false;
         }
 
-        return Boolean.getBoolean(System.getProperty("runConsulServer"));
+        return Boolean.valueOf(System.getProperty("CONSUL_SERVER"));
     }
 
     public static String getAccount() {
