@@ -33,4 +33,13 @@ public class RuntimeEnvironment {
         return Integer.valueOf(System.getProperty("BOXFUSE_PORTS_FORWARDED_HTTP"));
     }
 
+    public static boolean isRunningOnAWS() {
+        if(System.getProperty("hostedEnv")==null) {
+            return false;
+        }
+
+        return "AWS".equalsIgnoreCase(System.getProperty("hostedEnv"));
+        //
+    }
+
 }

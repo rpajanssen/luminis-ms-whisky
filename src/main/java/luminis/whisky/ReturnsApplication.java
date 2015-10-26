@@ -63,7 +63,11 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
 
         // todo : configure instead of hardcoding
         if(RuntimeEnvironment.isDevOrTest()) {
-            swaggerDropwizard.onRun(configuration, environment, "localhost", RuntimeEnvironment.getForwardedHttpPort());
+            if(RuntimeEnvironment.isRunningOnAWS()) {
+                swaggerDropwizard.onRun(configuration, environment, "whiskyreturns-rpajanssen.boxfuse.io", RuntimeEnvironment.getHttpPort());
+            } else {
+                swaggerDropwizard.onRun(configuration, environment, "localhost", RuntimeEnvironment.getForwardedHttpPort());
+            }
         } else {
             swaggerDropwizard.onRun(configuration, environment, "whiskyreturns-rpajanssen.boxfuse.io", RuntimeEnvironment.getHttpPort());
         }
