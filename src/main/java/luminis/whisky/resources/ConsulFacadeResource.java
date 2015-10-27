@@ -18,10 +18,10 @@ import javax.ws.rs.core.Response;
 @Api(value="Consul facade", description = "Exposes Consul API to enable Consul operations.")
 public class ConsulFacadeResource {
 
-    private ConsulClient consulClient;
+    private final ConsulClient consulClient;
 
-    public ConsulFacadeResource() {
-        consulClient = new ConsulClient();
+    public ConsulFacadeResource(ConsulClient consulClient) {
+        this.consulClient = consulClient;
     }
 
     @GET

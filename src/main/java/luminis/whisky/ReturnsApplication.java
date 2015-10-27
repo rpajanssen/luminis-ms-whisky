@@ -2,6 +2,7 @@ package luminis.whisky;
 
 import com.netflix.config.ConfigurationManager;
 import io.federecio.dropwizard.swagger.SwaggerDropwizard;
+import luminis.whisky.client.ConsulClient;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.health.TemplateHealthCheck;
 import luminis.whisky.resources.*;
@@ -61,9 +62,6 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
 
         registerExceptionHandlers(environment);
 
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!  INSTANCE URL = " + System.getProperty("instanceUrl"));
-
-        // todo : use configuration instead of hardcoding
         if(RuntimeEnvironment.isDevOrTest()) {
             if(RuntimeEnvironment.isRunningOnAWS()) {
                 System.out.println("running swagger for dev/test on AWS");
@@ -105,7 +103,7 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
     }
 
     private void registerConsulResource(Environment environment) {
-        environment.jersey().register(new ConsulFacadeResource());
+        environment.jersey().register(new ConsulFacadeResource(new ConsulClient()));
     }
 
     private void optionallyRegisterStubs(Environment environment) {

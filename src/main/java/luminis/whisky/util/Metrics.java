@@ -3,6 +3,8 @@ package luminis.whisky.util;
 import luminis.whisky.client.StatsdClient;
 import luminis.whisky.core.consul.ConsulServiceConfiguration;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -10,6 +12,7 @@ import javax.annotation.PreDestroy;
 public class Metrics {
     private final ConsulServiceUrlFinder consulServiceUrlFinder;
     private StatsdClient statsdClient;
+    private DateTime lastTry;
 
     public Metrics() {
         consulServiceUrlFinder = new ConsulServiceUrlFinder();
@@ -20,13 +23,25 @@ public class Metrics {
     }
 
     public void increment(String serviceId) {
-        if(statsdClient==null) {
+        if(statsdClient==null && waitIntervalIsOver()) {
             setup();
         }
 
         if(statsdClient!=null) {
             statsdClient.increment(serviceId);
         }
+    }
+
+    private boolean waitIntervalIsOver() {
+        DateTime now = new DateTime();
+
+        if(lastTry==null || Minutes.minutesBetween(lastTry, now).isGreaterThan(Minutes.minutes(1))) {
+            lastTry = now;
+
+            return true;
+        }
+
+        return false;
     }
 
     @PostConstruct

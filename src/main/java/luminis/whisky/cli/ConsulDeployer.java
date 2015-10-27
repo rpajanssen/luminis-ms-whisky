@@ -116,6 +116,7 @@ public class ConsulDeployer {
                     System.out.println("... run Consul server and agent on local/dev/test");
                     runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/binary/consul agent -data-dir=./consul -config-dir=./consul/config -server -bootstrap-expect 1 -ui-dir ./consul/dist"});
                 } else {
+                    // todo : configurable ip address
                     // with advertise of local agents ip address ( luminis office, local vm)
                     System.out.println("... run Consul agent only with advertising on local/dev/test");
                     runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/consul agent -advertise 10.1.17.180 -data-dir=./consul -config-dir=./consul/config"});

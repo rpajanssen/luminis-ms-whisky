@@ -44,6 +44,10 @@ public final class ConsulAgentConfiguration {
     }
 
     public URI getBaseURI() {
-        return UriBuilder.fromUri(String.format(CONSUL_BASE_URI, getProtocol(), getIp(), getPort())).build();
+        return UriBuilder.fromUri(getBaseUriString()).build();
+    }
+
+    public String getBaseUriString() {
+        return String.format(CONSUL_BASE_URI, getProtocol(), getIp(), getPort());
     }
 }

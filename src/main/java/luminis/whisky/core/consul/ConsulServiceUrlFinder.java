@@ -1,9 +1,14 @@
 package luminis.whisky.core.consul;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import luminis.whisky.client.ConsulClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.util.StringUtils;
+
+import java.util.concurrent.TimeUnit;
 
 public class ConsulServiceUrlFinder {
     // for now assume http and always a port
@@ -11,8 +16,74 @@ public class ConsulServiceUrlFinder {
 
     private ConsulClient consulClient;
 
+    private final LoadingCache<String, String> uriCache;
+    private final LoadingCache<String, ConsulServiceConfiguration> configCache;
+
+    @SuppressWarnings("unchecked")
     public ConsulServiceUrlFinder() {
         consulClient = new ConsulClient();
+
+        CacheBuilder cacheBuilder =
+                CacheBuilder.newBuilder().maximumSize(50).expireAfterAccess(10, TimeUnit.SECONDS);
+
+        uriCache = cacheBuilder.build(
+                new CacheLoader<String, String>() {
+                    @Override
+                    public String load(final String serviceId) throws DyingServiceException {
+                        return queryConsulForServiceUrl(serviceId);
+                    }
+                });
+
+        configCache = cacheBuilder.build(
+                new CacheLoader<String, ConsulServiceConfiguration>() {
+                    @Override
+                    public ConsulServiceConfiguration load(final String serviceId) throws DyingServiceException {
+                        return queryConsulForServiceConfiguration(serviceId);
+                    }
+                });
+    }
+
+    private String queryConsulForServiceUrl(String serviceId) throws DyingServiceException {
+        return new QueryConsulTemplate<String> () {
+
+            @Override
+            protected String buildResult(String address, String serviceAddress, String servicePort) {
+                String url = String.format(baseUrl, ifNotNullAElseB(serviceAddress, address), servicePort);
+
+                System.out.println(String.format("Found url %s for service %s", url, serviceId));
+
+                return url;
+            }
+        }.queryConsulForServiceUrl(serviceId);
+    }
+
+    private ConsulServiceConfiguration queryConsulForServiceConfiguration(String serviceId) throws DyingServiceException {
+        return new QueryConsulTemplate<ConsulServiceConfiguration> () {
+
+            @Override
+            protected ConsulServiceConfiguration buildResult(String address, String serviceAddress, String servicePort) {
+                ConsulServiceConfiguration serviceConfiguration =
+                        new ConsulServiceConfiguration()
+                                .withAddress(ifNotNullAElseB(serviceAddress, address))
+                                .withPort(Integer.valueOf(ifNotNullAElseB(servicePort, "80")));
+
+                System.out.println(
+                        String.format("Found service configuration %s for service %s",
+                                serviceConfiguration.toString(),
+                                serviceId)
+                );
+
+                return serviceConfiguration;
+            }
+        }.queryConsulForServiceUrl(serviceId);
+    }
+
+    private String ifNotNullAElseB(String a, String b) {
+        if(!StringUtils.isEmpty(a)) {
+            return a;
+        }
+
+        return b;
     }
 
     /**
@@ -35,78 +106,21 @@ public class ConsulServiceUrlFinder {
      * @throws DyingServiceException if the requested service is not healthy
      */
     public String findServiceUrl(String serviceId) throws DyingServiceException {
-        String node = getHealthyNode(serviceId);
-        if(node!=null) {
-            String jsonResponse = consulClient.catalogService(serviceId);
-
-            JSONArray response = new JSONArray(jsonResponse);
-
-            for(int index=0; index < response.length(); index++) {
-                if(node.equals(((JSONObject) response.get(index)).get("Node"))) {
-                    String address = (String) ((JSONObject) response.get(index)).get("Address");
-                    String serviceAddress = (String) ((JSONObject) response.get(index)).get("ServiceAddress");
-                    String servicePort = String.valueOf(((JSONObject) response.get(index)).get("ServicePort"));
-
-                    String url = String.format(baseUrl, ifNotNullAElseB(serviceAddress, address), servicePort);
-
-                    System.out.println(String.format("Found url %s for service %s", url, serviceId));
-
-                    return url;
-                }
-            }
-
-            throw new IllegalStateException(String.format("information for service %s for node %s not found", serviceId, node));
-        }
-
-        throw new DyingServiceException(String.format("service %s unhealthy and not available", serviceId));
+        return uriCache.getUnchecked(serviceId);
     }
 
     public ConsulServiceConfiguration findServiceConfiguration(String serviceId) throws DyingServiceException {
-        String node = getHealthyNode(serviceId);
-        if(node!=null) {
-            String jsonResponse = consulClient.catalogService(serviceId);
-
-            JSONArray response = new JSONArray(jsonResponse);
-            if (response.length() > 0) {
-                for(int index=0; index < response.length(); index++) {
-                    if (node.equals(((JSONObject) response.get(index)).get("Node"))) {
-                        String address = (String) ((JSONObject) response.get(0)).get("Address");
-                        String serviceAddress = (String) ((JSONObject) response.get(0)).get("ServiceAddress");
-                        String servicePort = String.valueOf(((JSONObject) response.get(0)).get("ServicePort"));
-
-                        ConsulServiceConfiguration serviceConfiguration =
-                                new ConsulServiceConfiguration()
-                                .withAddress(ifNotNullAElseB(serviceAddress, address))
-                                .withPort(Integer.valueOf(ifNotNullAElseB(servicePort, "80")));
-
-                        System.out.println(
-                                String.format("Found service configuration %s for service %s",
-                                        serviceConfiguration.toString(),
-                                        serviceId)
-                        );
-
-                        return serviceConfiguration;
-                    }
-                }
-
-                throw new IllegalStateException(String.format("information for service %s for node %s not found", serviceId, node));
-            }
-
-            System.out.println(String.format("Missing service configuration [%s] in Consul services configuration. Using defaults.", serviceId));
-
-            return new ConsulServiceConfiguration();
-        }
-
-        throw new DyingServiceException(serviceId);
+        return configCache.getUnchecked("csc-" + serviceId);
     }
 
+    // todo : pick one random
     private String getHealthyNode(String serviceId) {
         // get information about the service per node
         String jsonResponse = consulClient.healthService(serviceId);
 
         System.out.println("health[" + serviceId + "]=" + jsonResponse);
 
-        // iterate over the node to find a node with a healthy check for this service
+        // iterate over the node to find the first node with a healthy check for this service
         JSONArray nodes = new JSONArray(jsonResponse);
         for(int nodeIndex=0; nodeIndex < nodes.length(); nodeIndex++) {
             JSONObject nodeInformation = nodes.getJSONObject(nodeIndex);
@@ -130,11 +144,29 @@ public class ConsulServiceUrlFinder {
                 !"critical".equalsIgnoreCase(checks.getJSONObject(checkIndex).getString("Status"));
     }
 
-    private String ifNotNullAElseB(String a, String b) {
-        if(!StringUtils.isEmpty(a)) {
-            return a;
-        }
+    abstract class QueryConsulTemplate<T> {
+        protected abstract T buildResult(String address, String serviceAddress, String servicePort);
 
-        return b;
+        public T queryConsulForServiceUrl(String serviceId) throws DyingServiceException {
+            String node = getHealthyNode(serviceId);
+            if(node!=null) {
+                String jsonResponse = consulClient.catalogService(serviceId);
+
+                JSONArray response = new JSONArray(jsonResponse);
+                for(int index=0; index < response.length(); index++) {
+                    if(node.equals(((JSONObject) response.get(index)).get("Node"))) {
+                        String address = (String) ((JSONObject) response.get(index)).get("Address");
+                        String serviceAddress = (String) ((JSONObject) response.get(index)).get("ServiceAddress");
+                        String servicePort = String.valueOf(((JSONObject) response.get(index)).get("ServicePort"));
+
+                        return buildResult(address, serviceAddress, servicePort);
+                    }
+                }
+
+                throw new IllegalStateException(String.format("information for service %s for node %s not found", serviceId, node));
+            }
+
+            throw new DyingServiceException(String.format("service %s unhealthy and not available", serviceId));
+        }
     }
 }

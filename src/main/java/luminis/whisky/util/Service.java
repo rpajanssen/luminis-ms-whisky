@@ -2,6 +2,8 @@ package luminis.whisky.util;
 
 public enum Service {
     METRICS("metrics",null),
+    CONSUL("consul",null),
+
     RETURNS("returns", "/returns"),
     SHIPPING("shipping", "/shipments/returns"),
     BILLING("billing", "/bills/returns");
