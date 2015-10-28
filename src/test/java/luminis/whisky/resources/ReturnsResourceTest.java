@@ -31,16 +31,16 @@ public class ReturnsResourceTest {
             <T> Response callService(Service service, final T payload) throws DyingServiceException, InterruptedException {
                 OrderReturnRequest request = (OrderReturnRequest)payload;
 
-                if(Service.SHIPPING.equals(service) && "111".equals(request.getOrderNumber())) {
+                if(Service.SHIPPING.equals(service) && "112".equals(request.getOrderNumber())) {
                     OrderReturnResponse response =  new OrderReturnResponse();
-                    response.setOrderNumber("111");
+                    response.setOrderNumber("112");
                     response.setState(OrderReturnResponse.STATE_CANCELLED);
                     return Response.status(Response.Status.OK).entity(response).build();
                 }
 
-                if(Service.BILLING.equals(service) && "112".equals(request.getOrderNumber())) {
+                if(Service.BILLING.equals(service) && "111".equals(request.getOrderNumber())) {
                     OrderReturnResponse response =  new OrderReturnResponse();
-                    response.setOrderNumber("112");
+                    response.setOrderNumber("111");
                     response.setState(OrderReturnResponse.STATE_CANCELLED);
                     return Response.status(Response.Status.OK).entity(response).build();
                 }
