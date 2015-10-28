@@ -32,9 +32,9 @@ public class BillingStubResource {
         }
 
         if("111".equals(orderReturn.getOrderNumber())) {
-            return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState("a-horrible-state")).build();
+            return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState(OrderReturnResponse.STATE_CANCELLED)).build();
         }
 
-        return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState("returned")).build();
+        return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState(OrderReturnResponse.STATE_RETURNED)).build();
     }
 }

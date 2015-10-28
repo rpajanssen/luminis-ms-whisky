@@ -42,6 +42,10 @@ public class ShippingStubResource {
             }
         }
 
-        return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState("returned")).build();
+        if("112".equals(orderReturn.getOrderNumber())) {
+            return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState(OrderReturnResponse.STATE_CANCELLED)).build();
+        }
+
+        return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState(OrderReturnResponse.STATE_RETURNED)).build();
     }
 }

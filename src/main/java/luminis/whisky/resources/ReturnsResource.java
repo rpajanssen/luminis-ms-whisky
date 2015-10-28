@@ -16,7 +16,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-// todo : execute calls to billing / shipping concurrently
+// todo : execute calls to metrics / billing / shipping concurrently
 // todo : fan out
 // todo : transaction rollback on failure
 @Path("/returns")
@@ -59,10 +59,10 @@ public class ReturnsResource {
         response = callService(Service.BILLING, orderReturn);
         ifOrderStateNotReturnedThrowException(Service.BILLING, response);
 
-        return Response.status(Response.Status.OK).entity(orderReturn).build();
+        return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState(OrderReturnResponse.STATE_RETURNED)).build();
     }
 
-    private <T> Response callService(Service service, final T payload) throws DyingServiceException, InterruptedException {
+    <T> Response callService(Service service, final T payload) throws DyingServiceException, InterruptedException {
         String baseUrl = consulServiceUrlFinder.findServiceUrl(service.getServiceID());
 
         RestPostCommand<T> restPostCommand = new RestPostCommand<>(service, baseUrl, service.getServicePath(), payload);
@@ -70,7 +70,7 @@ public class ReturnsResource {
         return restPostCommand.execute();
     }
 
-    private void ifOrderStateNotReturnedThrowException(Service service, Response response) {
+    void ifOrderStateNotReturnedThrowException(Service service, Response response) {
         OrderReturnResponse orderReturnResponse = response.readEntity(OrderReturnResponse.class);
         if(!"returned".equalsIgnoreCase(orderReturnResponse.getState())) {
             throw new UnableToCancelException(service, orderReturnResponse);
