@@ -136,7 +136,7 @@
                 <version>2.18.1</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/*ResourceTest.java</exclude>
+                        <exclude>**/*IntegrationTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

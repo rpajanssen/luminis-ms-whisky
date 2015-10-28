@@ -240,7 +240,7 @@
                 <version>2.18.1</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/*ResourceTest.java</exclude>
+                        <exclude>**/*IntegrationTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -249,7 +249,7 @@
                 <version>2.18.1</version>
                 <configuration>
                     <includes>
-                        <include>**/*ResourceTest.java</include>
+                        <include>**/*IntegrationTest.java</include>
                     </includes>
                     <systemPropertyVariables>
                         <instanceUrl>${boxfuse.instances.0.url}</instanceUrl>

@@ -7,7 +7,7 @@ import org.junit.Test;
 import static com.jayway.restassured.RestAssured.get;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-public class DemoResourceTest {
+public class DemoResourceIntegrationTest {
 
     @Before
     public void setup() {

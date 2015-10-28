@@ -9,7 +9,7 @@ import org.junit.Test;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-public class ReturnsResourceResourceTest {
+public class ReturnsResourceIntegrationTest {
 
     @Before
     public void setup() {
