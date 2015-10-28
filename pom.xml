@@ -137,110 +137,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- must be placed after the shade plugin to guarantee the correct execution order -->
-            <plugin>
-                <groupId>com.boxfuse.client</groupId>
-                <artifactId>boxfuse-maven-plugin</artifactId>
-                <!--version>1.11.5.733</version-->
-                <!--version>1.12.0.751</version-->
-                <version>1.12.1.753</version>
-                <executions>
-                    <execution>
-                        <id>fuse-image</id>
-                        <goals>
-                            <goal>fuse</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                    <!-- only locally, travis ci does not support virtual box
-                         so we run on a test environment in aws
-                    -->
-                    <!--
-                    <execution>
-                        <id>run-on-virtualbox</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>pre-integration-test</phase>
-                    </execution>
-                    <execution>
-                        <id>kill-on-virtualbox</id>
-                        <goals>
-                            <goal>kill</goal>
-                        </goals>
-                        <phase>post-integration-test</phase>
-                    </execution>
-                    -->
-                    <execution>
-                        <id>run-on-test</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>pre-integration-test</phase>
-                        <configuration>
-                            <env>test</env>
-                            <envvars>
-                                <CONSUL_SERVER>true</CONSUL_SERVER>
-                            </envvars>
-                            <ports>
-                                <consul-http>9500</consul-http>
-                                <consul-dns>9600</consul-dns>
-                                <consul-cli-rpc>9400</consul-cli-rpc>
-                                <consul-rpc>9300</consul-rpc>
-                                <consul-lan>9301</consul-lan>
-                                <consul-wan>9302</consul-wan>
-                            </ports>
-                            <portsmap>
-                                <consul-http>59500</consul-http>
-                                <consul-dns>59600</consul-dns>
-                                <consul-cli-rpc>59400</consul-cli-rpc>
-                                <consul-rpc>59300</consul-rpc>
-                                <consul-lan>59301</consul-lan>
-                                <consul-wan>59302</consul-wan>
-                            </portsmap>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>kill-on-test</id>
-                        <goals>
-                            <goal>kill</goal>
-                        </goals>
-                        <phase>post-integration-test</phase>
-                        <configuration>
-                            <env>test</env>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>run-on-aws</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                        <configuration>
-                            <env>test</env>
-                            <envvars>
-                                <CONSUL_SERVER>true</CONSUL_SERVER>
-                            </envvars>
-                            <ports>
-                                <consul-http>9500</consul-http>
-                                <consul-dns>9600</consul-dns>
-                                <consul-cli-rpc>9400</consul-cli-rpc>
-                                <consul-rpc>9300</consul-rpc>
-                                <consul-lan>9301</consul-lan>
-                                <consul-wan>9302</consul-wan>
-                            </ports>
-                            <portsmap>
-                                <consul-http>59500</consul-http>
-                                <consul-dns>59600</consul-dns>
-                                <consul-cli-rpc>59400</consul-cli-rpc>
-                                <consul-rpc>59300</consul-rpc>
-                                <consul-lan>59301</consul-lan>
-                                <consul-wan>59302</consul-wan>
-                            </portsmap>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
@@ -251,37 +147,11 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.18.1</version>
-                <configuration>
-                    <includes>
-                        <include>**/*IntegrationTest.java</include>
-                    </includes>
-                    <systemPropertyVariables>
-                        <instanceUrl>${boxfuse.instances.0.url}</instanceUrl>
-                    </systemPropertyVariables>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>integration-test</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>verify</id>
-                        <goals>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                    <newVersion>${env.TRAVIS_BUILD_NUMBER}</newVersion>
+                    <newVersion>${project.version}</newVersion>
                 </configuration>
             </plugin>
             <plugin>
@@ -346,15 +216,6 @@
                             <version>2.8.1</version>
                         </plugin>
                     </reportPlugins>
-                </configuration>
-            </plugin>
-
-            <!-- disable deploy plugin since the artifacts are in the boxfuse vault -->
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
-                <configuration>
-                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
