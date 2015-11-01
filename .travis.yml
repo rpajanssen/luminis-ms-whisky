@@ -12,4 +12,4 @@ script:
   - sudo rm /etc/mavenrc
   - export MAVEN_OPTS="-Xmx2048m"
   - mvn deploy
-sudo: falseru
+sudo: false
