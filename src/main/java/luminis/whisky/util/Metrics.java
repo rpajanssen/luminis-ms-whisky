@@ -22,14 +22,16 @@ public class Metrics {
         this.consulServiceUrlFinder = consulServiceUrlFinder;
     }
 
-    public void increment(String serviceId) {
+    public boolean increment(String serviceId) {
         if(statsdClient==null && waitIntervalIsOver()) {
             setup();
         }
 
         if(statsdClient!=null) {
-            statsdClient.increment(serviceId);
+            return statsdClient.increment(serviceId);
         }
+
+        return false;
     }
 
     private boolean waitIntervalIsOver() {
@@ -47,7 +49,7 @@ public class Metrics {
     @PostConstruct
     public void setup() {
         try {
-            ConsulServiceConfiguration serviceConfiguration = consulServiceUrlFinder.findServiceConfiguration(Service.METRICS.getServiceID());
+            ConsulServiceConfiguration serviceConfiguration = consulServiceUrlFinder.findFirstAvailableServiceConfiguration(Service.METRICS.getServiceID());
             System.out.println("Found statsd ip and port: " + serviceConfiguration.getAddress() +":"+ serviceConfiguration.getPort());
             statsdClient = new StatsdClient(serviceConfiguration.getAddress(), serviceConfiguration.getPort());
         } catch(Exception e) {

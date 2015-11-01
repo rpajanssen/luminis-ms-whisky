@@ -14,7 +14,7 @@ defaultHystrixConfig:
   hystrix.command.default.circuitBreaker.requestVolumeThreshold: 20
   hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds: 5000
   hystrix.command.default.circuitBreaker.errorThresholdPercentage: 50
-  hystrix.threadpool.post-shipping.maxQueueSize: 50
+  hystrix.threadpool.post-shipping.maxQueueSize: 250
   hystrix.threadpool.post-shipping.coreSize: 5
-  hystrix.threadpool.post-billing.maxQueueSize: 50
+  hystrix.threadpool.post-billing.maxQueueSize: 250
   hystrix.threadpool.post-billing.coreSize: 5

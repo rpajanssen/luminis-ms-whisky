@@ -62,26 +62,7 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
 
         registerExceptionHandlers(environment);
 
-        if(RuntimeEnvironment.isDevOrTest()) {
-            if(RuntimeEnvironment.isRunningOnAWS()) {
-                System.out.println("running swagger for dev/test on AWS");
-                swaggerDropwizard.onRun(
-                        configuration, environment,
-                        String.format("%s-%s-%s.boxfuse.io", RuntimeEnvironment.getApp(), RuntimeEnvironment.getEnv().toLowerCase(), RuntimeEnvironment.getAccount()),
-                        RuntimeEnvironment.getHttpPort()
-                );
-            } else {
-                System.out.println("running swagger for local dev/test deploy");
-                swaggerDropwizard.onRun(configuration, environment, "localhost", RuntimeEnvironment.getForwardedHttpPort());
-            }
-        } else {
-            System.out.println("running swagger for prod, assuming deployed on AWS");
-            swaggerDropwizard.onRun(
-                    configuration, environment,
-                    String.format("%s-%s.boxfuse.io", RuntimeEnvironment.getApp(), RuntimeEnvironment.getAccount()),
-                    RuntimeEnvironment.getHttpPort()
-            );
-        }
+        deploySwagger(configuration, environment);
     }
 
     private void configureCORS(Environment environment) {
@@ -116,6 +97,11 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
     private void registerReturns(Environment environment) {
         ConsulServiceUrlFinder consulServiceUrlFinder = new ConsulServiceUrlFinder();
         environment.jersey().register(new ReturnsResource(consulServiceUrlFinder, new Metrics(consulServiceUrlFinder)));
+
+        // todo
+        environment.jersey().register(new ReturnsWithObservableAndFanOutResource(consulServiceUrlFinder, new Metrics(consulServiceUrlFinder)));
+        environment.jersey().register(new ReturnsWithObservableResource(consulServiceUrlFinder, new Metrics(consulServiceUrlFinder)));
+        environment.jersey().register(new ReturnsWithFuturesAndFanOutResource(consulServiceUrlFinder, new Metrics(consulServiceUrlFinder)));
     }
 
     private void registerExceptionHandlers(Environment environment) {
@@ -127,5 +113,28 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
         environment.jersey().register(new IllegalStateExceptionHandler());
         environment.jersey().register(new RuntimeExceptionHandler());
         environment.jersey().register(new ExceptionHandler());
+    }
+
+    private void deploySwagger(ApplicationConfiguration configuration, Environment environment) {
+        if(RuntimeEnvironment.isDevOrTest()) {
+            if(RuntimeEnvironment.isRunningOnAWS()) {
+                System.out.println("running swagger for dev/test on AWS");
+                swaggerDropwizard.onRun(
+                        configuration, environment,
+                        String.format("%s-%s-%s.boxfuse.io", RuntimeEnvironment.getApp(), RuntimeEnvironment.getEnv().toLowerCase(), RuntimeEnvironment.getAccount()),
+                        RuntimeEnvironment.getHttpPort()
+                );
+            } else {
+                System.out.println("running swagger for local dev/test deploy");
+                swaggerDropwizard.onRun(configuration, environment, "localhost", RuntimeEnvironment.getForwardedHttpPort());
+            }
+        } else {
+            System.out.println("running swagger for prod, assuming deployed on AWS");
+            swaggerDropwizard.onRun(
+                    configuration, environment,
+                    String.format("%s-%s.boxfuse.io", RuntimeEnvironment.getApp(), RuntimeEnvironment.getAccount()),
+                    RuntimeEnvironment.getHttpPort()
+            );
+        }
     }
 }

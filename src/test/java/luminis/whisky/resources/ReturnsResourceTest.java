@@ -66,9 +66,8 @@ public class ReturnsResourceTest {
         OrderReturnRequest request = new OrderReturnRequest();
         request.setOrderNumber("42");
 
-        OrderReturnResponse response = (OrderReturnResponse)underTest.returnOrder(request).getEntity();
+        OrderReturnRequest response = (OrderReturnRequest)underTest.returnOrder(request).getEntity();
         assertEquals("42", response.getOrderNumber());
-        assertEquals(OrderReturnResponse.STATE_RETURNED, response.getState());
     }
 
     @Test(expected = UnableToCancelException.class)

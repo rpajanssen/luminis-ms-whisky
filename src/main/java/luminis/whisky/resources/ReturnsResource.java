@@ -20,7 +20,8 @@ import javax.ws.rs.core.Response;
 // todo : fan out
 // todo : transaction rollback on failure
 @Path("/returns")
-@Api(value="Order returns", description = "Returns the order and cancels shipping and billing.")
+@Api(value="Order returns", description = "Returns the order and cancels shipping and billing. Comfort zone imperative" +
+        " sequential programming.")
 public class ReturnsResource {
     private final ConsulServiceUrlFinder consulServiceUrlFinder;
     private final Metrics metrics;
@@ -59,11 +60,11 @@ public class ReturnsResource {
         response = callService(Service.BILLING, orderReturn);
         ifOrderStateNotReturnedThrowException(Service.BILLING, response);
 
-        return Response.status(Response.Status.OK).entity(new OrderReturnResponse(orderReturn).withState(OrderReturnResponse.STATE_RETURNED)).build();
+        return Response.status(Response.Status.OK).entity(orderReturn).build();
     }
 
     <T> Response callService(Service service, final T payload) throws DyingServiceException, InterruptedException {
-        String baseUrl = consulServiceUrlFinder.findServiceUrl(service.getServiceID());
+        String baseUrl = consulServiceUrlFinder.findFirstAvailableServiceUrl(service.getServiceID());
 
         RestPostCommand<T> restPostCommand = new RestPostCommand<>(service, baseUrl, service.getServicePath(), payload);
 
