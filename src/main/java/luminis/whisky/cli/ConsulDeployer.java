@@ -131,11 +131,7 @@ public class ConsulDeployer {
 
     private static void runAsyncCommand(final String[] command) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(new Runnable() {
-            public void run() {
-                runCommand(command);
-            }
-        });
+        executorService.execute(() -> runCommand(command));
     }
 
     private static void runCommand(final String[] command) {
