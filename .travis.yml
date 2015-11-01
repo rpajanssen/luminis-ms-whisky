@@ -1,5 +1,15 @@
 language: java
 jdk: oraclejdk8
-sudo: false
+branches:
+  except:
+    - develop
+sudo: required
+env:
+  global:
+    - MAVEN_OPTS="-Xmx2048m"
 install: mvn versions:set
-script: mvn deploy
+script:
+  - sudo rm /etc/mavenrc
+  - export MAVEN_OPTS="-Xmx2048m"
+  - mvn deploy
+sudo: falseru
