@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 // todo : fan out
 // todo : transaction rollback on failure
 @Path("/returns")
-@Api(value="Order returns", description = "Returns the order and cancels shipping and billing. Comfort zone imperative" +
+@Api(value="Order returns - sequential", description = "Returns the order and cancels shipping and billing. Comfort zone imperative" +
         " sequential programming.")
 public class ReturnsResource {
     private final ConsulServiceUrlFinder consulServiceUrlFinder;

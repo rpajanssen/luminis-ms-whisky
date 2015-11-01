@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 // todo : fan out
 // todo : transaction rollback on failure
 @Path("/simple-concurrency-returns")
-@Api(value="Order returns", description = "Returns the order and cancels shipping and billing. It executes the" +
+@Api(value="Order returns - concurrent, no fan-out, rxjava", description = "Returns the order and cancels shipping and billing. It executes the" +
         " cancellation of the shipping and the billing concurrently using observables. No fan out.")
 public class ReturnsWithObservableResource {
     private final ConsulServiceUrlFinder consulServiceUrlFinder;

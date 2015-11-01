@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 
 // todo : transaction rollback on failure
 @Path("/concurrent-futures-fanout-returns")
-@Api(value="Order returns", description = "Returns the order and cancels shipping and billing. It executes the" +
+@Api(value="Order returns - concurrent fan-out", description = "Returns the order and cancels shipping and billing. It executes the" +
         " cancellation of the billing and shipping concurrently using and executor services and callables. It fans" +
         " out to all available shipping and billing services and reacts to the first incoming response.")
 public class ReturnsWithFuturesAndFanOutResource {
