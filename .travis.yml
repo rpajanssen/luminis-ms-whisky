@@ -3,6 +3,7 @@ jdk: oraclejdk8
 branches:
   except:
     - develop
+sudo: false
 sudo: required
 env:
   global:
@@ -12,4 +13,3 @@ script:
   - sudo rm /etc/mavenrc
   - export MAVEN_OPTS="-Xmx2048m"
   - mvn deploy
-sudo: false
