@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class ShippingStubResourceTest {
-    ShippingStubResource underTest;
+    private ShippingStubResource underTest;
 
     @Before
     public void setup() {

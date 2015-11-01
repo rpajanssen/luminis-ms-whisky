@@ -19,9 +19,9 @@ import javax.ws.rs.core.Response;
 
 // todo : transaction rollback on failure
 @Path("/concurrent-fanout-returns")
-@Api(value="Order returns - concurrent fan-out, rxjava", description = "Returns the order and cancels shipping and billing. It executes the" +
-        " cancellation of the shipping and billing concurrently using observables. It fans out (concurrently) to all " +
-        " registered services and reacts on the first incoming result.")
+@Api(value="Order returns - concurrent fan-out, rxjava", description = "Returns the order and cancels shipping" +
+        " and billing. It executes the cancellation of the shipping and billing concurrently using observables." +
+        " It fans out (concurrently) to all registered services and reacts on the first incoming result.")
 public class ReturnsWithObservableAndFanOutResource {
     private final ConsulServiceUrlFinder consulServiceUrlFinder;
     private final Metrics metrics;
