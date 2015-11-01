@@ -48,11 +48,7 @@ public class ConsulServiceUrlFinder {
 
             @Override
             protected String buildResult(String address, String serviceAddress, String servicePort) {
-                String url = String.format(baseUrl, ifNotNullAElseB(serviceAddress, address), servicePort);
-
-                System.out.println(String.format("Found url %s for service %s", url, serviceId));
-
-                return url;
+                return String.format(baseUrl, ifNotNullAElseB(serviceAddress, address), servicePort);
             }
         }.queryConsulForServiceUrl(serviceId);
     }
@@ -62,18 +58,9 @@ public class ConsulServiceUrlFinder {
 
             @Override
             protected ConsulServiceConfiguration buildResult(String address, String serviceAddress, String servicePort) {
-                ConsulServiceConfiguration serviceConfiguration =
-                        new ConsulServiceConfiguration()
+                return new ConsulServiceConfiguration()
                                 .withAddress(ifNotNullAElseB(serviceAddress, address))
                                 .withPort(Integer.valueOf(ifNotNullAElseB(servicePort, "80")));
-
-                System.out.println(
-                        String.format("Found service configuration %s for service %s",
-                                serviceConfiguration.toString(),
-                                serviceId)
-                );
-
-                return serviceConfiguration;
             }
         }.queryConsulForServiceUrl(serviceId);
     }
