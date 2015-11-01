@@ -10,11 +10,6 @@ env:
     # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
     #   via the "travis encrypt" command using the project repo's public key
     - secure: "l7SuaafQM2SJc2U+u8HyidO3W9jHlQ2DsQsUxvY6g3UTrNesJUZZTDK5UwLlZ26shv+I2gJn/6A3S76aHVeb7At1lWLxj/KSxN3PwljF9eVQbP5dPfbU8zzn6sD6J6AaRTE6t1rPh84BDfZ5dOzPUtSwC+hfk5tO84pxVxQ80DDyQDBa1Po9tt26QSdMrExBP9YAG/URK8BX+tYbZNGUFKSMtChMQ5Gl7e+VDYHQ8ntk99HQjCAsU7PbwHakCvH51IrP2GZO16TrvEQVPK36cE6mnTAmMFbW0LitxBsCSPmhac5EV2wKonKA2PLIJELV9MNSkZv0Q1yROWpiyG4eMUtPJ5PwnS5MhK9HcUvknFQiFCexLCgNDDl0dIhstOQek6dsGSaZzYKlaVqKA7WscoZ9kV7ip+YfdtL3PFKeove6NUpSpiXaSJnvkP5PKqWxhEGL8Q3RpRCXEJECZyhuLI4fZh07XNLzljaS06DViE6y85iTIk31GMBVgOJJm8GG8f1QwUbDtYeKjoZIEXTkAmgaQ67xGG6BKY+nkRzqf8FRsYp+MR9WSIWOJc/zw3UZXrCEF6vCHHjna/jop8PwzJfqXxSNClEYVJ0tFaWqqaKXW4qtlx8xj+gwHXtwYIyFO8LuuMBbZOUd1Rw6EXtcb5wOj90VF1TnMznK1/VtJpE="
-install: mvn versions:set
-script:
-  - sudo rm /etc/mavenrc
-  - export MAVEN_OPTS="-Xmx2048m"
-  - mvn deploy
 addons:
   coverity_scan:
     project:
@@ -24,3 +19,8 @@ addons:
     build_command_prepend: "mvn clean"
     build_command:   "mvn -DskipTests=true compile"
     branch_pattern: coverity_scan
+install: mvn versions:set
+script:
+  - sudo rm /etc/mavenrc
+  - export MAVEN_OPTS="-Xmx2048m"
+  - mvn deploy
