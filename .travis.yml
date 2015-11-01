@@ -4,12 +4,8 @@ branches:
   except:
     - develop
 sudo: false
-sudo: required
 env:
   global:
     - MAVEN_OPTS="-Xmx2048m"
 install: mvn versions:set
-script:
-  - sudo rm /etc/mavenrc
-  - export MAVEN_OPTS="-Xmx2048m"
-  - mvn deploy
+script: mvn deploy
