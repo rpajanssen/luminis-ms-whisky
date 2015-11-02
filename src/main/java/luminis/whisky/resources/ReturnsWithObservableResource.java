@@ -19,8 +19,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-// todo : configure as the resource
-// todo : fan out
+// todo : configure as the primary resource
 // todo : transaction rollback on failure
 @Path("/simple-concurrency-returns")
 @Api(value="Order returns - concurrent, no fan-out, rxjava", description = "Returns the order and cancels shipping" +
@@ -116,8 +115,7 @@ public class ReturnsWithObservableResource {
         }
     }
 
-    // todo : unit test
-    class CalculationContext {
+    static class CalculationContext {
         private boolean cancelBillingSuccess = false;
         private boolean cancelShippingSuccess = false;
 

@@ -12,8 +12,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ConsulDeployer {
-    //private static String consul_address = "http://10.1.17.188:8301";
-
     public static void deployAndRun() {
         boolean deployed = deployConsul();
         runConsul(deployed);
@@ -44,7 +42,7 @@ public class ConsulDeployer {
 
             return result;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
             return false;
         }
     }

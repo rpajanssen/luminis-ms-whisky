@@ -66,11 +66,27 @@ public class RuntimeEnvironment {
     }
 
     public static boolean isRunningConsulServer() {
-        if(System.getProperty("CONSUL_SERVER")==null) {
+        if(System.getProperty("RUN_WITH_CONSUL_SERVER")==null) {
             return false;
         }
 
-        return Boolean.valueOf(System.getProperty("CONSUL_SERVER"));
+        return Boolean.valueOf(System.getProperty("RUN_WITH_CONSUL_SERVER"));
+    }
+
+    public static String getConsulServerAddress() {
+        if(System.getProperty("CONSUL_SERVER_ADDRESS")==null) {
+            return "";
+        }
+
+        return String.valueOf(System.getProperty("CONSUL_SERVER_ADDRESS"));
+    }
+
+    public static String getConsulServerPort() {
+        if(System.getProperty("CONSUL_SERVER_PORT")==null) {
+            return "";
+        }
+
+        return String.valueOf(System.getProperty("CONSUL_SERVER_PORT"));
     }
 
     public static String getAccount() {

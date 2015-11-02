@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement
 public class OrderReturnResponse {
-    // todo : enum
     public static final String STATE_RETURNED = "returned";
     public static final String STATE_CANCELLED = "a-horrible-state";
 
