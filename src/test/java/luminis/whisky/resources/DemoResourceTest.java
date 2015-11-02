@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 public class DemoResourceTest {
     private final String template = "Hello, %s";
 
-    DemoResource underTest;
+    private DemoResource underTest;
 
     @Before
     public void setup() {

@@ -23,9 +23,10 @@ import java.util.concurrent.Executors;
 
 // todo : transaction rollback on failure
 @Path("/concurrent-futures-fanout-returns")
-@Api(value="Order returns - concurrent fan-out", description = "Returns the order and cancels shipping and billing. It executes the" +
-        " cancellation of the billing and shipping concurrently using and executor services and callables. It fans" +
-        " out to all available shipping and billing services and reacts to the first incoming response.")
+@Api(value="Order returns - concurrent fan-out", description = "Returns the order and cancels shipping and billing." +
+        " It executes the cancellation of the billing and shipping concurrently using and executor services" +
+        " and callables. It fans out to all available shipping and billing services and reacts to the" +
+        " first incoming response.")
 public class ReturnsWithFuturesAndFanOutResource {
     private final ConsulServiceUrlFinder consulServiceUrlFinder;
     private final Metrics metrics;
@@ -82,7 +83,7 @@ public class ReturnsWithFuturesAndFanOutResource {
                     calculationContext.fanOutShipping();
 
                     Response response = callService(Service.SHIPPING, url, orderReturn);
-                    ifErrorResponseThrowException(Service.SHIPPING, response);
+                    ifCancellationFailed(Service.SHIPPING, response);
 
                     calculationContext.registerShippingSuccess();
                 } catch (Throwable e) {
@@ -104,7 +105,7 @@ public class ReturnsWithFuturesAndFanOutResource {
                     calculationContext.fanOutBilling();
 
                     Response response = callService(Service.BILLING, url, orderReturn);
-                    ifErrorResponseThrowException(Service.BILLING, response);
+                    ifCancellationFailed(Service.BILLING, response);
 
                     calculationContext.registerBillingSuccess();
                 } catch (Throwable e) {
@@ -138,7 +139,7 @@ public class ReturnsWithFuturesAndFanOutResource {
         return restPostCommand.execute();
     }
 
-    void ifErrorResponseThrowException(Service service, Response response) {
+    void ifCancellationFailed(Service service, Response response) {
         OrderReturnResponse orderReturnResponse = response.readEntity(OrderReturnResponse.class);
         if(!"returned".equalsIgnoreCase(orderReturnResponse.getState())) {
             throw new UnableToCancelException(service, orderReturnResponse);

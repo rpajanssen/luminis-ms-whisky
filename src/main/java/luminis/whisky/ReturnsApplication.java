@@ -43,13 +43,10 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
     }
 
     @PreDestroy
-    public void cleanup() {
-        // todo
-    }
+    public void cleanup() { }
 
     @Override
-    public void run(final ApplicationConfiguration configuration,
-                    final Environment environment) {
+    public void run(final ApplicationConfiguration configuration, final Environment environment) {
         ConfigurationManager.install(new MapConfiguration(configuration.getDefaultHystrixConfig()));
 
         configureCORS(environment);
@@ -76,7 +73,6 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
         filter.setInitParameter("allowCredentials", "true");
     }
 
-    // todo : delete this demo health check?
     private void registerDemoResource(Environment environment) {
         String template = "Hi, %s!";
         environment.jersey().register(new DemoResource(template));
@@ -97,8 +93,6 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
     private void registerReturns(Environment environment) {
         ConsulServiceUrlFinder consulServiceUrlFinder = new ConsulServiceUrlFinder();
         environment.jersey().register(new ReturnsResource(consulServiceUrlFinder, new Metrics(consulServiceUrlFinder)));
-
-        // todo
         environment.jersey().register(new ReturnsWithObservableAndFanOutResource(consulServiceUrlFinder, new Metrics(consulServiceUrlFinder)));
         environment.jersey().register(new ReturnsWithObservableResource(consulServiceUrlFinder, new Metrics(consulServiceUrlFinder)));
         environment.jersey().register(new ReturnsWithFuturesAndFanOutResource(consulServiceUrlFinder, new Metrics(consulServiceUrlFinder)));
@@ -128,13 +122,6 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
                 System.out.println("running swagger for local dev/test deploy");
                 swaggerDropwizard.onRun(configuration, environment, "localhost", RuntimeEnvironment.getForwardedHttpPort());
             }
-        } else {
-            System.out.println("running swagger for prod, assuming deployed on AWS");
-            swaggerDropwizard.onRun(
-                    configuration, environment,
-                    String.format("%s-%s.boxfuse.io", RuntimeEnvironment.getApp(), RuntimeEnvironment.getAccount()),
-                    RuntimeEnvironment.getHttpPort()
-            );
         }
     }
 }

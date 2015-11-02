@@ -14,10 +14,6 @@ public class Metrics {
     private StatsdClient statsdClient;
     private DateTime lastTry;
 
-    public Metrics() {
-        consulServiceUrlFinder = new ConsulServiceUrlFinder();
-    }
-
     public Metrics(ConsulServiceUrlFinder consulServiceUrlFinder) {
         this.consulServiceUrlFinder = consulServiceUrlFinder;
     }

@@ -1,9 +1,5 @@
 package luminis.whisky.core.consul;
 
-
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-
 public final class ConsulAgentConfiguration {
     private static final ConsulAgentConfiguration instance = new ConsulAgentConfiguration();
 
@@ -41,10 +37,6 @@ public final class ConsulAgentConfiguration {
 
     public void setProtocol(String protocol) {
         this.protocol = protocol;
-    }
-
-    public URI getBaseURI() {
-        return UriBuilder.fromUri(getBaseUriString()).build();
     }
 
     public String getBaseUriString() {

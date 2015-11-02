@@ -6,6 +6,7 @@ import io.dropwizard.Configuration;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class ApplicationConfiguration extends Configuration {
 
     @NotNull
