@@ -83,7 +83,7 @@ public class ReturnsWithFuturesAndFanOutResource {
                     calculationContext.fanOutShipping();
 
                     Response response = callService(Service.SHIPPING, url, orderReturn);
-                    ifErrorResponseThrowException(Service.SHIPPING, response);
+                    ifCancellationFailed(Service.SHIPPING, response);
 
                     calculationContext.registerShippingSuccess();
                 } catch (Throwable e) {
@@ -105,7 +105,7 @@ public class ReturnsWithFuturesAndFanOutResource {
                     calculationContext.fanOutBilling();
 
                     Response response = callService(Service.BILLING, url, orderReturn);
-                    ifErrorResponseThrowException(Service.BILLING, response);
+                    ifCancellationFailed(Service.BILLING, response);
 
                     calculationContext.registerBillingSuccess();
                 } catch (Throwable e) {
@@ -139,7 +139,7 @@ public class ReturnsWithFuturesAndFanOutResource {
         return restPostCommand.execute();
     }
 
-    void ifErrorResponseThrowException(Service service, Response response) {
+    void ifCancellationFailed(Service service, Response response) {
         OrderReturnResponse orderReturnResponse = response.readEntity(OrderReturnResponse.class);
         if(!"returned".equalsIgnoreCase(orderReturnResponse.getState())) {
             throw new UnableToCancelException(service, orderReturnResponse);

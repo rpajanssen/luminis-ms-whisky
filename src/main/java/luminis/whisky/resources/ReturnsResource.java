@@ -50,15 +50,13 @@ public class ReturnsResource {
             notes = "Cancels an order. Cancels the shipment and billing of the order."
     )
     public Response returnOrder(final OrderReturnRequest orderReturn) throws DyingServiceException, InterruptedException {
-        System.out.println(String.format("incoming return order call for order %s", orderReturn.getOrderNumber()));
-
         metrics.increment(Service.RETURNS.getServiceID());
 
         Response response = callService(Service.SHIPPING, orderReturn);
-        ifOrderStateNotReturnedThrowException(Service.SHIPPING, response);
+        ifCancellationFailed(Service.SHIPPING, response);
 
         response = callService(Service.BILLING, orderReturn);
-        ifOrderStateNotReturnedThrowException(Service.BILLING, response);
+        ifCancellationFailed(Service.BILLING, response);
 
         return Response.status(Response.Status.OK).entity(orderReturn).build();
     }
@@ -71,7 +69,7 @@ public class ReturnsResource {
         return restPostCommand.execute();
     }
 
-    void ifOrderStateNotReturnedThrowException(Service service, Response response) {
+    void ifCancellationFailed(Service service, Response response) {
         OrderReturnResponse orderReturnResponse = response.readEntity(OrderReturnResponse.class);
         if(!"returned".equalsIgnoreCase(orderReturnResponse.getState())) {
             throw new UnableToCancelException(service, orderReturnResponse);

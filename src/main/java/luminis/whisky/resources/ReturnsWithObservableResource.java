@@ -19,6 +19,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+// todo : configure as the resource
 // todo : fan out
 // todo : transaction rollback on failure
 @Path("/simple-concurrency-returns")
@@ -63,7 +64,7 @@ public class ReturnsWithObservableResource {
             // don't care what happens
         });
         shippingResponse.subscribe(response -> {
-                    ifErrorResponseThrowException(Service.SHIPPING, response);
+                    ifCancellationFailed(Service.SHIPPING, response);
 
                     calculationContext.registerShippingSuccess();
                 },
@@ -71,7 +72,7 @@ public class ReturnsWithObservableResource {
                 calculationContext::registerException
         );
         billingResponse.subscribe(response -> {
-                    ifErrorResponseThrowException(Service.BILLING, response);
+                    ifCancellationFailed(Service.BILLING, response);
 
                     calculationContext.registerBillingSuccess();
                 },
@@ -104,7 +105,7 @@ public class ReturnsWithObservableResource {
         return restPostCommand.toObservable();
     }
 
-    void ifErrorResponseThrowException(Service service, Response response) {
+    void ifCancellationFailed(Service service, Response response) {
         if(Response.Status.OK.getStatusCode()!=response.getStatus()) {
             throw new ServiceResultException(response.getStatus(), response.readEntity(ErrorMessageResponse.class), service);
         }

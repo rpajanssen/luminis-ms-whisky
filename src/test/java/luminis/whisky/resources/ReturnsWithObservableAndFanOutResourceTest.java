@@ -65,7 +65,7 @@ public class ReturnsWithObservableAndFanOutResourceTest {
             }
 
             @Override
-            void ifErrorResponseThrowException(Service service, Response response) {
+            void ifCancellationFailed(Service service, Response response) {
                 if(Response.Status.OK.getStatusCode()!=response.getStatus()) {
                     throw new ServiceResultException(response.getStatus(), response.readEntity(ErrorMessageResponse.class), service);
                 }

@@ -52,7 +52,7 @@ public class ReturnsResourceTest {
             }
 
             @Override
-            void ifOrderStateNotReturnedThrowException(Service service, Response response) {
+            void ifCancellationFailed(Service service, Response response) {
                 OrderReturnResponse orderReturnResponse = (OrderReturnResponse)response.getEntity();
                 if(!"returned".equalsIgnoreCase(orderReturnResponse.getState())) {
                     throw new UnableToCancelException(service, orderReturnResponse);
