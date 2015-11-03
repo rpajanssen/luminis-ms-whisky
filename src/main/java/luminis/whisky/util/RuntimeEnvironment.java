@@ -89,6 +89,46 @@ public class RuntimeEnvironment {
         return String.valueOf(System.getProperty("CONSUL_SERVER_PORT"));
     }
 
+    public static String getAdvertiseAddress() {
+        if(System.getProperty("CONSUL_ADVERTISE_ADDRESS")==null) {
+            return null;
+        }
+
+        return String.valueOf(System.getProperty("CONSUL_ADVERTISE_ADDRESS"));
+    }
+
+    public static String getConsulAgentAddress() {
+        if(System.getProperty("CONSUL_AGENT_ADDRESS")==null) {
+            return "localhost";
+        }
+
+        return String.valueOf(System.getProperty("CONSUL_AGENT_ADDRESS"));
+    }
+
+    public static int getConsulAgentHttpPort() {
+        if(System.getProperty("BOXFUSE_PORTS_CONSUL_HTTP")==null) {
+            return 8500;
+        }
+
+        return Integer.valueOf(System.getProperty("BOXFUSE_PORTS_CONSUL_HTTP"));
+    }
+
+    public static boolean skipConsulDeployment() {
+        if(System.getProperty("CONSUL_SKIP_DEPLOYMENT")==null) {
+            return false;
+        }
+
+        return Boolean.valueOf(System.getProperty("CONSUL_SKIP_DEPLOYMENT"));
+    }
+
+    public static boolean withoutStubs() {
+        if(System.getProperty("WITHOUT_STUBS")==null) {
+            return false;
+        }
+
+        return Boolean.valueOf(System.getProperty("WITHOUT_STUBS"));
+    }
+
     public static String getAccount() {
         return String.valueOf(System.getProperty("BOXFUSE_ACCOUNT"));
     }

@@ -13,8 +13,12 @@ import java.util.concurrent.Executors;
 
 public class ConsulDeployer {
     public static void deployAndRun() {
-        boolean deployed = deployConsul();
-        runConsul(deployed);
+        if(RuntimeEnvironment.skipConsulDeployment()) {
+            System.out.println("skipping consul deployment");
+        } else {
+            boolean deployed = deployConsul();
+            runConsul(deployed);
+        }
     }
 
     private static boolean deployConsul() {
@@ -23,11 +27,14 @@ public class ConsulDeployer {
             boolean result = deployArtifact("consul/binary/consul", "consul/binary", "consul/binary/consul", Permission.EXECUTE);
 
             // deploy consul configuration
-            if(RuntimeEnvironment.isProd()) {
+            if (RuntimeEnvironment.isProd()) {
                 result = result && deployArtifact("consul/config/prod_config.json", "consul/config", "consul/config/config.json", Permission.READ);
             } else {
-                // todo : local with local external server
-                result = result && deployArtifact("consul/config/test_config.json", "consul/config", "consul/config/config.json", Permission.READ);
+                if (RuntimeEnvironment.isRunningConsulServer()) {
+                    result = result && deployArtifact("consul/config/test_config.json", "consul/config", "consul/config/config.json", Permission.READ);
+                } else {
+                    result = result && deployArtifact("consul/config/prod_config.json", "consul/config", "consul/config/config.json", Permission.READ);
+                }
             }
 
             // deploy consul ui
@@ -61,7 +68,7 @@ public class ConsulDeployer {
         if(!folder.exists()) {
             System.out.println("creating folder " + targetFilePath);
             if(!folder.mkdirs()) {
-                System.out.println("unable to create folder " + targetFilePath);
+                System.err.println("unable to create folder " + targetFilePath);
                 return true;
             }
         }
@@ -100,29 +107,35 @@ public class ConsulDeployer {
         }
     }
 
-    // todo : specify ports so we can run multiple vm's without clashing ports on one machine
     private static void runConsul(boolean deployed) {
         if (deployed) {
             System.out.println("starting deployed consul");
             if(RuntimeEnvironment.isProd()) {
                 // run with agent only
                 System.out.println("... run Consul agent only on prod");
-                runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/binary/consul agent -data-dir=./consul -config-dir=./consul/config"});
+                runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/binary/consul agent -data-dir ./consul -config-dir ./consul/config"});
             } else {
                 if (RuntimeEnvironment.isRunningConsulServer()) {
                     // run with agent as server
                     System.out.println("... run Consul server and agent on local/dev/test");
-                    runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/binary/consul agent -data-dir=./consul -config-dir=./consul/config -server -bootstrap-expect 1 -ui-dir ./consul/dist"});
+                    runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/binary/consul agent -data-dir ./consul -config-dir ./consul/config -server -bootstrap-expect 1 -ui-dir ./consul/dist"});
                 } else {
-                    // todo : configurable ip address
-                    // with advertise of local agents ip address ( luminis office, local vm)
-                    System.out.println("... run Consul agent only with advertising on local/dev/test");
-                    runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/consul agent -advertise 10.1.17.180 -data-dir=./consul -config-dir=./consul/config"});
+                    if(RuntimeEnvironment.getAdvertiseAddress()!=null) {
+                        // with advertise of local agents ip address ( luminis office, local vm)
+                        System.out.println("... run Consul agent only with advertising on local/dev/test");
+                        runAsyncCommand(new String[]{
+                                "/bin/sh", "-c",
+                                String.format("./consul/binary/consul agent -advertise %s -data-dir ./consul -config-dir ./consul/config", RuntimeEnvironment.getAdvertiseAddress())
+                        });
+                    } else {
+                        System.out.println("... run Consul agent only without advertising on local/dev/test");
+                        runAsyncCommand(new String[]{"/bin/sh", "-c", "./consul/binary/consul agent -data-dir ./consul -config-dir ./consul/config"});
+                    }
                 }
             }
         } else {
             System.out.println("crossing our fingers that consul is available from the command line");
-            runAsyncCommand(new String[]{"consul", "agent", "-data-dir=/tmp/consul -config-dir=./consul/config"});
+            runAsyncCommand(new String[]{"consul", "agent", "-data-dir /tmp/consul -config-dir ./consul/config"});
         }
 
     }
@@ -141,11 +154,9 @@ public class ConsulDeployer {
             // any error???
             int exitVal = process.waitFor();
             System.out.print("Exec result = " + exitVal);
-
         } catch (IOException | InterruptedException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            System.out.println();
+            System.err.println(e.getMessage());
+            System.err.println();
         }
     }
 

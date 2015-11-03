@@ -1,5 +1,7 @@
 package luminis.whisky.core.consul;
 
+import luminis.whisky.util.RuntimeEnvironment;
+
 public final class ConsulAgentConfiguration {
     private static final ConsulAgentConfiguration instance = new ConsulAgentConfiguration();
 
@@ -9,7 +11,10 @@ public final class ConsulAgentConfiguration {
     private String ip = "localhost";
     private String port = "8500";
 
-    private ConsulAgentConfiguration() {}
+    private ConsulAgentConfiguration() {
+        ip = String.valueOf(RuntimeEnvironment.getConsulAgentAddress());
+        port = String.valueOf(RuntimeEnvironment.getConsulAgentHttpPort());
+    }
 
     public static ConsulAgentConfiguration getInstance() {
         return instance;

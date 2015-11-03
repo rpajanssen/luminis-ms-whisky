@@ -84,7 +84,7 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
     }
 
     private void optionallyRegisterStubs(Environment environment) {
-        if(RuntimeEnvironment.isDevOrTest()) {
+        if(RuntimeEnvironment.isDevOrTest() && !RuntimeEnvironment.withoutStubs()) {
             environment.jersey().register(new ShippingStubResource());
             environment.jersey().register(new BillingStubResource());
         }
