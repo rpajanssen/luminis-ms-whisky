@@ -70,12 +70,10 @@ public class ReturnsWithObservableResource extends AbstractPingResource {
     }
 
     private Response getResult(OrderReturnRequest orderReturn, CalculationContext calculationContext) throws Throwable {
-        // todo : ugly
         while(!calculationContext.completed()) {
             Thread.sleep(1);
         }
 
-        // todo : ugly as hell as well!
         if(calculationContext.withException()) {
             throw calculationContext.exception();
         }
