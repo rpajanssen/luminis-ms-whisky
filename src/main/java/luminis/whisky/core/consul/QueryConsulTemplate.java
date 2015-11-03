@@ -72,7 +72,7 @@ public abstract class QueryConsulTemplate<T> {
     }
 
     /**
-     * Consul health service returns somethinf like:
+     * Consul health service returns something like:
      * [
      *    {
      *       "Node": {
