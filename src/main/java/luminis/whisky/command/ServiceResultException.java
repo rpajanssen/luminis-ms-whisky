@@ -1,10 +1,12 @@
 package luminis.whisky.command;
 
+import luminis.whisky.core.consul.exception.ResponseProvidingException;
 import luminis.whisky.domain.ErrorMessageResponse;
 import luminis.whisky.util.Service;
 
+import javax.ws.rs.core.Response;
 
-public class ServiceResultException extends RuntimeException {
+public class ServiceResultException extends ResponseProvidingException {
     private final int status;
     private final ErrorMessageResponse errorMessageResponse;
     private final Service service;
@@ -25,5 +27,10 @@ public class ServiceResultException extends RuntimeException {
 
     public Service getService() {
         return service;
+    }
+
+    @Override
+    public Response buildResponse() {
+        return Response.status(this.getStatus()).entity(this.getErrorMessageResponse()).build();
     }
 }

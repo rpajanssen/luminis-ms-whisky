@@ -13,8 +13,6 @@ public class RuntimeExceptionHandler implements ExceptionMapper<RuntimeException
     public Response toResponse(RuntimeException e) {
         System.err.println(String.format(ErrorCode.UEE.getMessage(), e.getMessage()));
 
-        e.printStackTrace();
-
         return Response
                 .status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ErrorMessageResponse(

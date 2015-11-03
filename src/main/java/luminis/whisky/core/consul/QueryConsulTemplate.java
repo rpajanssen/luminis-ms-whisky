@@ -68,7 +68,7 @@ public abstract class QueryConsulTemplate<T> {
             return urls;
         }
 
-        throw new DyingServiceException(String.format("service %s unhealthy and not available", serviceId));
+        throw new DyingServiceException(serviceId);
     }
 
     /**

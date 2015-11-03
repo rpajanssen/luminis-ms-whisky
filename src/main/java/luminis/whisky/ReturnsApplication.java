@@ -103,6 +103,7 @@ public class ReturnsApplication extends Application<ApplicationConfiguration> {
         environment.jersey().register(new UnavailableServiceExceptionHandler());
         environment.jersey().register(new ServiceResultExceptionHandler());
         environment.jersey().register(new UnableToCancelExceptionExceptionHandler());
+        environment.jersey().register(new UncheckedExecutionExceptionHandler());
         environment.jersey().register(new InterruptedExceptionHandler());
         environment.jersey().register(new IllegalStateExceptionHandler());
         environment.jersey().register(new RuntimeExceptionHandler());

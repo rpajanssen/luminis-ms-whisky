@@ -17,6 +17,7 @@ public class ReturnsResourceIntegrationTest {
             // Local manual
             RestAssured.baseURI = "http://127.0.0.1";
             RestAssured.port = 8888;
+            //RestAssured.port = 8080;
         } else {
             // CI
             RestAssured.baseURI = System.getProperty("instanceUrl");
@@ -52,9 +53,9 @@ public class ReturnsResourceIntegrationTest {
                 .contentType("application/json")
                 .body("{\"orderNumber\":\"007\"}")
 
-                .post(Service.RETURNS.getServicePath())
+        .post(Service.RETURNS.getServicePath())
 
-                .then().assertThat().content(equalTo("{\"code\":4102,\"description\":\"service billing unavailable\"}"));
+        .then().assertThat().content(equalTo("{\"code\":4101,\"description\":\"service billing unhealthy and not available\"}"));
     }
 
     @Test
@@ -63,9 +64,9 @@ public class ReturnsResourceIntegrationTest {
                 .contentType("application/json")
                 .body("{\"orderNumber\":\"006\"}")
 
-                .post(Service.RETURNS.getServicePath())
+        .post(Service.RETURNS.getServicePath())
 
-                .then().assertThat().content(equalTo("{\"code\":4102,\"description\":\"service shipping unavailable\"}"));
+        .then().assertThat().content(equalTo("{\"code\":4101,\"description\":\"service shipping unhealthy and not available\"}"));
     }
 
     @Test
@@ -74,8 +75,8 @@ public class ReturnsResourceIntegrationTest {
                 .contentType("application/json")
                 .body("{\"orderNumber\":\"111\"}")
 
-                .post(Service.RETURNS.getServicePath())
+        .post(Service.RETURNS.getServicePath())
 
-                .then().assertThat().content(equalTo("{\"code\":4001,\"description\":\"unable to cancel billing for order 111, resulting state was a-horrible-state\"}"));
+        .then().assertThat().content(equalTo("{\"code\":4001,\"description\":\"unable to cancel billing for order 111, resulting state was a-horrible-state\"}"));
     }
 }
