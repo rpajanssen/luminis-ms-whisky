@@ -20,7 +20,7 @@ addons:
     build_command:   "mvn -DskipTests=true compile"
     branch_pattern: coverity_scan
 install: mvn versions:set
-script:
-  - sudo rm /etc/mavenrc
-  - export MAVEN_OPTS="-Xmx2048m"
-  - mvn deploy
+#script:
+#  - sudo rm /etc/mavenrc
+#  - export MAVEN_OPTS="-Xmx2048m"
+#  - mvn deploy
