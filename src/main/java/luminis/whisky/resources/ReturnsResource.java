@@ -7,7 +7,6 @@ import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.core.consul.DyingServiceException;
 import luminis.whisky.domain.OrderReturnRequest;
 import luminis.whisky.domain.OrderReturnResponse;
-import luminis.whisky.domain.Ping;
 import luminis.whisky.resources.exception.UnableToCancelException;
 import luminis.whisky.util.Metrics;
 import luminis.whisky.util.Service;
@@ -16,30 +15,17 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-// todo : execute calls to metrics / billing / shipping concurrently
-// todo : fan out
 // todo : transaction rollback on failure
-@Path("/returns")
-@Api(value="Order returns - sequential", description = "Returns the order and cancels shipping and billing. Comfort zone imperative" +
-        " sequential programming.")
-public class ReturnsResource {
+@Path("/imperative-returns")
+@Api(value="Order returns - imperative, sequential", description = "Returns the order and cancels shipping and billing." +
+        " Comfort zone imperative sequential programming.")
+public class ReturnsResource extends AbstractPingResource {
     private final ConsulServiceUrlFinder consulServiceUrlFinder;
     private final Metrics metrics;
 
     public ReturnsResource(ConsulServiceUrlFinder consulServiceUrlFinder, Metrics metrics) {
         this.consulServiceUrlFinder = consulServiceUrlFinder;
         this.metrics = metrics;
-    }
-
-    @GET
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-            value = "Ping",
-            notes = "Simply returns pong."
-    )
-    public Response ping() {
-        return Response.status(Response.Status.OK).entity(new Ping("pong")).build();
     }
 
     @POST

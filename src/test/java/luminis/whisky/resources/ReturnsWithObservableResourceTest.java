@@ -2,6 +2,7 @@ package luminis.whisky.resources;
 
 
 import luminis.whisky.command.ServiceResultException;
+import luminis.whisky.command.UnavailableServiceException;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.core.consul.DyingServiceException;
 import luminis.whisky.domain.ErrorMessageResponse;
@@ -17,6 +18,8 @@ import rx.Observable;
 import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 
@@ -91,5 +94,25 @@ public class ReturnsWithObservableResourceTest {
         request.setOrderNumber("112");
 
         underTest.returnOrder(request).getEntity();
+    }
+
+    @Test
+    public void should_return_proper_state() {
+        ReturnsWithObservableResource.CalculationContext calculationContext = new ReturnsWithObservableResource.CalculationContext();
+
+        assertFalse(calculationContext.withException());
+        assertFalse(calculationContext.completed());
+
+        calculationContext.registerBillingSuccess();
+        assertFalse(calculationContext.completed());
+
+        calculationContext.registerException(new UnavailableServiceException(Service.SHIPPING, "Ooops"));
+        assertTrue(calculationContext.completed());
+
+        calculationContext.registerException(null);
+        assertFalse(calculationContext.completed());
+
+        calculationContext.registerShippingSuccess();
+        assertTrue(calculationContext.completed());
     }
 }

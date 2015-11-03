@@ -9,8 +9,9 @@ import org.junit.Test;
 import javax.ws.rs.core.Response;
 
 public class RestPostCommandTest {
-    private String baseUri = "http://fake.host";
-    private String path = "/fake-path";
+    private static final String BASE_URI = "http://fake.host";
+    private static final String PATH = "/fake-path";
+
     private OrderReturnRequest payload;
 
     private RestPostCommand<OrderReturnRequest> underTest;
@@ -20,7 +21,7 @@ public class RestPostCommandTest {
         payload = new OrderReturnRequest();
         payload.setOrderNumber("42");
 
-        underTest = new RestPostCommand<OrderReturnRequest>(Service.SHIPPING, baseUri, path, payload) {
+        underTest = new RestPostCommand<OrderReturnRequest>(Service.SHIPPING, BASE_URI, PATH, payload) {
             @Override
             protected Response run() throws Exception {
                 if("007".equals(payload.getOrderNumber())) {

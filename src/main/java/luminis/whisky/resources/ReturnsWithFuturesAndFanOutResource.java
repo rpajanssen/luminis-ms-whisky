@@ -2,13 +2,9 @@ package luminis.whisky.resources;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
-import luminis.whisky.command.RestPostCommand;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.core.consul.DyingServiceException;
 import luminis.whisky.domain.OrderReturnRequest;
-import luminis.whisky.domain.OrderReturnResponse;
-import luminis.whisky.domain.Ping;
-import luminis.whisky.resources.exception.UnableToCancelException;
 import luminis.whisky.util.Metrics;
 import luminis.whisky.util.Service;
 
@@ -27,24 +23,13 @@ import java.util.concurrent.Executors;
         " It executes the cancellation of the billing and shipping concurrently using and executor services" +
         " and callables. It fans out to all available shipping and billing services and reacts to the" +
         " first incoming response.")
-public class ReturnsWithFuturesAndFanOutResource {
+public class ReturnsWithFuturesAndFanOutResource extends AbstractFanOutResource{
     private final ConsulServiceUrlFinder consulServiceUrlFinder;
     private final Metrics metrics;
 
     public ReturnsWithFuturesAndFanOutResource(ConsulServiceUrlFinder consulServiceUrlFinder, Metrics metrics) {
         this.consulServiceUrlFinder = consulServiceUrlFinder;
         this.metrics = metrics;
-    }
-
-    @GET
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-            value = "Ping",
-            notes = "Simply returns pong."
-    )
-    public Response ping() {
-        return Response.status(Response.Status.OK).entity(new Ping("pong")).build();
     }
 
     @POST
@@ -72,7 +57,7 @@ public class ReturnsWithFuturesAndFanOutResource {
             threadPool.submit(task);
         }
 
-        return getResult(orderReturn, calculationContext);
+        return waitForResult(orderReturn, calculationContext);
     }
 
     private void fanOutShippingCancellation(OrderReturnRequest orderReturn, CalculationContext calculationContext, List<Callable> tasks) throws DyingServiceException {
@@ -83,7 +68,7 @@ public class ReturnsWithFuturesAndFanOutResource {
                     calculationContext.fanOutShipping();
 
                     Response response = callService(Service.SHIPPING, url, orderReturn);
-                    ifCancellationFailed(Service.SHIPPING, response);
+                    ifCancellationFailedThrowException(Service.SHIPPING, response);
 
                     calculationContext.registerShippingSuccess();
                 } catch (Throwable e) {
@@ -105,7 +90,7 @@ public class ReturnsWithFuturesAndFanOutResource {
                     calculationContext.fanOutBilling();
 
                     Response response = callService(Service.BILLING, url, orderReturn);
-                    ifCancellationFailed(Service.BILLING, response);
+                    ifCancellationFailedThrowException(Service.BILLING, response);
 
                     calculationContext.registerBillingSuccess();
                 } catch (Throwable e) {
@@ -116,92 +101,6 @@ public class ReturnsWithFuturesAndFanOutResource {
 
                 return null;
             });
-        }
-    }
-
-    private Response getResult(OrderReturnRequest orderReturn, CalculationContext calculationContext) throws Throwable {
-        // todo : ugly
-        while(!calculationContext.completed()) {
-            Thread.sleep(1);
-        }
-
-        // todo : ugly as hell as well!
-        if(calculationContext.withException()) {
-            throw calculationContext.exception();
-        }
-
-        return Response.status(Response.Status.OK).entity(orderReturn).build();
-    }
-
-    <T> Response callService(Service service, String baseUrl, final T payload) throws DyingServiceException, InterruptedException {
-        RestPostCommand<T> restPostCommand = new RestPostCommand<>(service, baseUrl, service.getServicePath(), payload);
-
-        return restPostCommand.execute();
-    }
-
-    void ifCancellationFailed(Service service, Response response) {
-        OrderReturnResponse orderReturnResponse = response.readEntity(OrderReturnResponse.class);
-        if(!"returned".equalsIgnoreCase(orderReturnResponse.getState())) {
-            throw new UnableToCancelException(service, orderReturnResponse);
-        }
-    }
-
-    // todo : unit test
-    class CalculationContext {
-        private int billingFanOutCount = 0;
-        private int shippingFanOutCount =0;
-
-        private boolean cancelBillingSuccess = false;
-        private boolean cancelShippingSuccess = false;
-
-        private Throwable billingException;
-        private Throwable shippingException;
-
-        void fanOutShipping() {
-            shippingFanOutCount++;
-        }
-
-        void fanOutBilling() {
-            billingFanOutCount++;
-        }
-
-        void signOffShippingFanOut() {
-            shippingFanOutCount--;
-        }
-
-        void signOffBillingFanOut() {
-            billingFanOutCount--;
-        }
-
-        void registerShippingSuccess() {
-            cancelShippingSuccess = true;
-        }
-
-        void registerBillingSuccess() {
-            cancelBillingSuccess = true;
-        }
-
-        void registerShippingException(Throwable e) {
-            shippingException = e;
-        }
-
-        void registerBillingException(Throwable e) {
-            billingException = e;
-        }
-
-        boolean completed() {
-            return cancelBillingSuccess && cancelShippingSuccess ||
-                    ( (billingException!=null && billingFanOutCount==0) ||
-                            (shippingException!=null && shippingFanOutCount==0)
-                    );
-        }
-
-        boolean withException() {
-            return billingException!=null || shippingException!=null;
-        }
-
-        Throwable exception() {
-            return billingException != null ? billingException : shippingException;
         }
     }
 }

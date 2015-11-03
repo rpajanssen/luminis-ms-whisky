@@ -2,6 +2,7 @@ package luminis.whisky.resources;
 
 
 import luminis.whisky.command.ServiceResultException;
+import luminis.whisky.command.UnavailableServiceException;
 import luminis.whisky.core.consul.ConsulServiceUrlFinder;
 import luminis.whisky.core.consul.DyingServiceException;
 import luminis.whisky.domain.ErrorMessageResponse;
@@ -12,15 +13,14 @@ import luminis.whisky.util.Metrics;
 import luminis.whisky.util.Service;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import rx.Observable;
 
 import javax.ws.rs.core.Response;
 
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -65,7 +65,7 @@ public class ReturnsWithObservableAndFanOutResourceTest {
             }
 
             @Override
-            void ifCancellationFailed(Service service, Response response) {
+            void ifCancellationFailedThrowException(Service service, Response response) {
                 if(Response.Status.OK.getStatusCode()!=response.getStatus()) {
                     throw new ServiceResultException(response.getStatus(), response.readEntity(ErrorMessageResponse.class), service);
                 }
@@ -101,5 +101,47 @@ public class ReturnsWithObservableAndFanOutResourceTest {
         request.setOrderNumber("112");
 
         underTest.returnOrder(request).getEntity();
+    }
+
+    @Test
+    public void should_return_proper_state() {
+        ReturnsWithObservableAndFanOutResource.CalculationContext calculationContext = new ReturnsWithObservableAndFanOutResource.CalculationContext();
+
+        assertFalse(calculationContext.withSuccess());
+        assertFalse(calculationContext.hasCompleted());
+
+        // double fan-out for both services
+        calculationContext.fanOutBilling();
+        calculationContext.fanOutBilling();
+        calculationContext.fanOutShipping();
+        calculationContext.fanOutShipping();
+
+        // first successful billing result comes in
+        calculationContext.registerBillingSuccess();
+        calculationContext.signOffBillingFanOut();
+        assertFalse(calculationContext.hasCompleted());
+
+        // second billing call result in exception, but we already have a successful billing result, so no change in status
+        calculationContext.registerBillingException(new UnavailableServiceException(Service.BILLING, "Ooops"));
+        calculationContext.signOffBillingFanOut();
+        assertFalse(calculationContext.hasCompleted());
+
+        // first shipping result in, an exception... but still one outstanding... so no worries yet
+        calculationContext.registerShippingException(new UnavailableServiceException(Service.SHIPPING, "Ooops"));
+        calculationContext.signOffShippingFanOut();
+        assertFalse(calculationContext.hasCompleted());
+
+        // second shipping result, no success, so we completed with no success
+        calculationContext.signOffShippingFanOut();
+        assertTrue(calculationContext.hasCompleted());
+        assertFalse(calculationContext.withSuccess());
+
+        // another shipping fan-out, with a successful result coming back
+        calculationContext.fanOutShipping();
+        calculationContext.registerShippingSuccess();
+        calculationContext.signOffShippingFanOut();
+
+        // a successful completion
+        assertTrue(calculationContext.hasCompleted());
     }
 }
