@@ -9,7 +9,6 @@ import luminis.whisky.core.consul.DyingServiceException;
 import luminis.whisky.domain.ErrorMessageResponse;
 import luminis.whisky.domain.OrderReturnRequest;
 import luminis.whisky.domain.OrderReturnResponse;
-import luminis.whisky.domain.Ping;
 import luminis.whisky.resources.exception.UnableToCancelException;
 import luminis.whisky.util.Metrics;
 import luminis.whisky.util.Service;
@@ -19,30 +18,18 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-// todo : configure as the primary resource
 // todo : transaction rollback on failure
-@Path("/simple-concurrency-returns")
+@Path("/returns")
 @Api(value="Order returns - concurrent, no fan-out, rxjava", description = "Returns the order and cancels shipping" +
         " and billing. It executes the cancellation of the shipping and the billing concurrently using observables." +
         " No fan out.")
-public class ReturnsWithObservableResource {
+public class ReturnsWithObservableResource extends AbstractPingResource {
     private final ConsulServiceUrlFinder consulServiceUrlFinder;
     private final Metrics metrics;
 
     public ReturnsWithObservableResource(ConsulServiceUrlFinder consulServiceUrlFinder, Metrics metrics) {
         this.consulServiceUrlFinder = consulServiceUrlFinder;
         this.metrics = metrics;
-    }
-
-    @GET
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(
-            value = "Ping",
-            notes = "Simply returns pong."
-    )
-    public Response ping() {
-        return Response.status(Response.Status.OK).entity(new Ping("pong")).build();
     }
 
     @POST

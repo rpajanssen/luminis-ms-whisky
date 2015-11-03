@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 /**
  * Captures the boilerplate of fanning out service calls and waiting for a result.
  */
-public abstract class AbstractFanOutResource {
+public abstract class AbstractFanOutResource extends AbstractPingResource {
 
     protected Response waitForResult(OrderReturnRequest orderReturn, CalculationContext calculationContext) throws Throwable {
         while(!calculationContext.hasCompleted()) {
