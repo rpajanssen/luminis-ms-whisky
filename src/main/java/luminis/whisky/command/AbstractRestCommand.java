@@ -4,6 +4,7 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import luminis.whisky.domain.ErrorMessageResponse;
+import luminis.whisky.resources.exception.ErrorCode;
 import luminis.whisky.util.Service;
 
 import javax.ws.rs.core.Response;
@@ -38,7 +39,7 @@ public abstract class AbstractRestCommand extends HystrixCommand<Response> {
 
             // service is not available
             System.err.println(String.format("problem with service %s : %s ", service.getServiceID(), e.getMessage()));
-            throw new UnavailableServiceException(service, e.getMessage());
+            throw new UnavailableServiceException(service, ErrorCode.US.getMessage());
         }
     }
 
