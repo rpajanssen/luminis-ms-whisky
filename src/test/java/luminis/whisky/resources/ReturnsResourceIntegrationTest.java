@@ -52,9 +52,10 @@ public class ReturnsResourceIntegrationTest {
                 .contentType("application/json")
                 .body("{\"orderNumber\":\"007\"}")
 
-                .post(Service.RETURNS.getServicePath())
+        .post(Service.RETURNS.getServicePath())
 
-                .then().assertThat().content(equalTo("{\"code\":4102,\"description\":\"service billing unavailable\"}"));
+        //.then().assertThat().content(equalTo("{\"code\":404,\"description\":\"No shipments for order 666 found.\"}"));
+        .then().assertThat().content(equalTo("{\"code\":4501,\"description\":\"unexpected exception occurred : RestPostCommand timed-out and no fallback available. \"}"));
     }
 
     @Test
@@ -63,9 +64,10 @@ public class ReturnsResourceIntegrationTest {
                 .contentType("application/json")
                 .body("{\"orderNumber\":\"006\"}")
 
-                .post(Service.RETURNS.getServicePath())
+        .post(Service.RETURNS.getServicePath())
 
-                .then().assertThat().content(equalTo("{\"code\":4102,\"description\":\"service shipping unavailable\"}"));
+        //.then().assertThat().content(equalTo("{\"code\":404,\"description\":\"No shipments for order 666 found.\"}"));
+        .then().assertThat().content(equalTo("{\"code\":4501,\"description\":\"unexpected exception occurred : RestPostCommand timed-out and no fallback available. \"}"));
     }
 
     @Test
