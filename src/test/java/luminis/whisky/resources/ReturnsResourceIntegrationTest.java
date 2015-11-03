@@ -54,7 +54,7 @@ public class ReturnsResourceIntegrationTest {
 
                 .post(Service.RETURNS.getServicePath())
 
-                .then().assertThat().content(equalTo("{\"code\":4102,\"description\":\"service billing unavailable\"}"));
+                .then().assertThat().content(equalTo(" {\"code\":4501,\"description\":\"unexpected exception occurred : RestPostCommand timed-out and no fallback available. \"}"));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ReturnsResourceIntegrationTest {
 
                 .post(Service.RETURNS.getServicePath())
 
-                .then().assertThat().content(equalTo("{\"code\":4102,\"description\":\"service shipping unavailable\"}"));
+                .then().assertThat().content(equalTo(" {\"code\":4501,\"description\":\"unexpected exception occurred : RestPostCommand timed-out and no fallback available. \"}"));
     }
 
     @Test
